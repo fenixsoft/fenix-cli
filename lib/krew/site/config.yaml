@@ -1,0 +1,14 @@
+title: "Krew – kubectl plugin manager"
+baseURL: "https://krew.sigs.k8s.io/"
+languageCode: "en-us"
+enableGitInfo: true
+enableRobotsTXT: true
+disableKinds:
+- taxonomy
+- taxonomyTerm
+markup:
+  highlight:
+    style: dracula
+  goldmark:
+    renderer:
+      unsafe: true # required for dynamic JS content editing

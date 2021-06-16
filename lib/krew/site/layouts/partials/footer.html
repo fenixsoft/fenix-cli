@@ -1,0 +1,101 @@
+
+        <footer class="text-muted small">
+            <hr/>
+            &copy; {{ now.Format "2006"}} The Kubernetes Authors.
+            Krew is a Kubernetes
+                <a href="https://github.com/kubernetes/community/blob/master/sig-cli/README.md#cli-special-interest-group" target="_blank" class="text-info">
+                    SIG CLI</a> project.
+                <p class="d-none d-md-block">
+                    {{- with .File -}}
+                        <a href="http://sigs.k8s.io/krew/site/content/{{- .File.Path -}}" target="_blank" class="text-info">
+                        Edit Page</a>
+                    {{- end -}}
+                    {{- if .GitInfo }}
+                        &middot;
+                        <span id="lastmod"></span>
+                    {{- end}}
+                </p>
+            </footer>
+        </div>
+    </div><!-- .container -->
+
+    {{ if .GitInfo }}
+    <script>
+        function writeLastMod(lastMod, commitHash){
+            var days = (Date.now()/1000 - lastMod)/(60*60*24);
+            var text;
+            if (days < 1) {
+                text = 'today'
+            } else if (days < 2 ) {
+                text = 'yesterday'
+            } else if (days < 62) {
+                text = `${Math.trunc(days)} days ago`
+            } else if (days < 365*2) {
+                text = `${Math.trunc(days/30)} months ago`
+            } else {
+                text = `${Math.trunc(days/365)} years ago`
+            }
+            document.getElementById('lastmod').innerHTML = `Page last updated ` +
+                `<a class="text-info" target="_blank"` +
+                `href="https://github.com/kubernetes-sigs/krew/commit/${commitHash}">` +
+                `${text}</a>.`;
+        };
+        writeLastMod({{- .Lastmod.Unix -}}, '{{- .GitInfo.Hash -}}');
+    </script>
+    {{ end }}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const elems = document.querySelectorAll(".krew-plugin-count");
+        if (elems.length === 0){
+            return;
+        }
+        let count = '<error>';
+        try {
+            const resp = await fetch('/.netlify/functions/api/pluginCount');
+            const json = await resp.json();
+            count = json.data?.count ?? '<error>';
+        } catch (e) {
+            console.warn(e);
+        }
+        elems.forEach(elem => elem.innerText=count);
+    });
+    </script>
+
+    <script type="module">
+    import {html, render} from 'https://unpkg.com/lit-html?module';
+    const repoLink = repo => repo
+        ? html`<a href="${repo}" rel="nofollow"><img src="https://img.shields.io/github/stars/${repo}.svg?label=stars&logo=github"/></a>`
+        : html``;
+    const row = plugin => html`<tr>
+        <td><a rel="nofollow" href="${plugin.homepage}">${plugin.name}</a></td>
+        <td>${plugin.short_description}</td>
+        <td>${repoLink(plugin.github_repo)}</td>
+    </tr>`;
+    const tableRows = plugins => plugins.map(p => html`${row(p)}`);
+    const error = e => e
+        ? html`<tr><td/><td>failed to load plugins: ${e}<td><td/></tr>`
+        : html`<tr><td/><td>failed to load plugins<td><td/></tr>`
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const pluginTableElem = document.querySelector("#krew-plugins-list");
+        if (!pluginTableElem){
+            return;
+        }
+        try {
+            const resp = await fetch('/.netlify/functions/api/plugins');
+            const json = await resp.json()
+            const plugins = json.data?.plugins;
+            if (!Boolean(plugins?.length)) {
+                render(error(), pluginTableElem);
+                return;
+            }
+            plugins.sort((a,b) => a.name.localeCompare(b.name));
+            render(tableRows(plugins), pluginTableElem);
+        } catch (e) {
+            render(error(e), pluginTableElem);
+        }
+    });
+    </script>
+</body>
+</html>

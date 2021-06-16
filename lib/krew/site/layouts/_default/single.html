@@ -1,0 +1,12 @@
+{{ partial "header.html" . }}
+    <article class="py-lg-3">
+        <h1>{{.Title}}</h1>
+        {{ with .Content }}
+            {{.}}
+        {{ else }}
+            <blockquote>This page is not yet written.</blockquote>
+        {{ end }}
+    </article>
+
+{{ partial "backbutton.html" .}}
+{{ partial "footer.html" . }}

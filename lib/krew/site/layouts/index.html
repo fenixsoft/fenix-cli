@@ -1,0 +1,16 @@
+{{ partial "header.html" . }}
+
+<article>
+    <div class="lead">
+        {{.Content}}
+    </div>
+
+    <a href="{{ "/docs/user-guide/quickstart" | relURL }} " class="btn btn-primary text-nowrap">Quickstart</a>
+
+    <a href="{{ "/docs/user-guide" | relURL }} " class="btn btn-light text-nowrap">User Guide</a>
+
+    <a href="{{ "/docs/developer-guide" | relURL }} " class="btn btn-light text-nowrap">Developer Guide</a>
+
+</article>
+
+{{ partial "footer.html" . }}
