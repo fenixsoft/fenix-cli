@@ -1,8 +1,8 @@
-package environments
+package template
 
 import "github.com/AlecAivazis/survey/v2"
 
-func setSurveyTemplate() {
+func SetSurveyTemplate() {
 	survey.SelectQuestionTemplate = `
 {{- if .ShowHelp }}{{- color .Config.Icons.Help.Format }}{{ .Config.Icons.Help.Text }} {{ .Help }}{{color "reset"}}{{"\n"}}{{end}}
 {{- color .Config.Icons.Question.Format }}{{ .Config.Icons.Question.Text }} {{color "reset"}}
@@ -44,5 +44,4 @@ func setSurveyTemplate() {
   {{- if and .Help (not .ShowHelp)}}{{color "cyan"}}[{{ .Config.HelpInput }} for help]{{color "reset"}} {{end}}
   {{- color "white"}}{{if .Default}}(Y/n) {{else}}(y/N) {{end}}{{color "reset"}}
 {{- end}}`
-
 }

@@ -14,7 +14,7 @@ func Complete(d prompt.Document) []prompt.Suggest {
 	return Completer.Complete(d)
 }
 
-func RegisterEnv() (*environments.Prompt, error) {
+func RegisterEnv() (*environments.Runtime, error) {
 	DisableKlog()
 
 	if c, err := kube.NewCompleter(); err != nil {
@@ -22,22 +22,16 @@ func RegisterEnv() (*environments.Prompt, error) {
 	} else {
 		Completer = c
 
-		for _, cmd := range environments.DefaultCommands {
-			suggest := prompt.Suggest{
-				Text:        cmd.Text,
-				Description: cmd.Description,
-			}
-			kube.Commands = append(kube.Commands, suggest)
-		}
-
-		return &environments.Prompt{
-			Prefix:    "kubectl",
-			Completer: Complete,
-			Executor:  environments.GetDefaultExecutor("kubectl", nil),
+		Completer.KubernetesRuntime = &environments.Runtime{
+			Prefix:         "kubectl",
+			Completer:      Complete,
+			Executor:       environments.GetDefaultExecutor("kubectl", nil),
+			Commands:       ExtraCommands,
+			MainSuggestion: kube.Commands,
 			LivePrefix: func() (prefix string, useLivePrefix bool) {
 				return fmt.Sprintf("%v > kubectl ", c.Namespace), true
 			},
-			Commands: ExtraCommands,
-		}, nil
+		}
+		return Completer.KubernetesRuntime, nil
 	}
 }

@@ -4,20 +4,21 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	prompt "github.com/c-bata/go-prompt"
-	"github.com/fenixsoft/fenix-cli/src/internal/util"
+	"github.com/fenixsoft/fenix-cli/src/internal/template"
 	"os"
 )
 
-type Prompt struct {
-	Prefix      string
-	Completer   prompt.Completer
-	Executor    prompt.Executor
-	ExitChecker prompt.ExitChecker
-	LivePrefix  func() (prefix string, useLivePrefix bool)
-	Commands    []Command
+type Runtime struct {
+	Prefix         string
+	Completer      prompt.Completer
+	Executor       prompt.Executor
+	ExitChecker    prompt.ExitChecker
+	LivePrefix     func() (prefix string, useLivePrefix bool)
+	Commands       []Command
+	MainSuggestion []prompt.Suggest
 }
 
-type Register func() (*Prompt, error)
+type Register func() (*Runtime, error)
 
 type Environment string
 
@@ -28,7 +29,7 @@ const (
 	Istio      Environment = "Istio"
 )
 
-var Environments = map[Environment]*Prompt{}
+var Environments = map[Environment]*Runtime{}
 
 var Registers = map[Environment]Register{}
 
@@ -56,23 +57,43 @@ func SelectCurrentEnvironment() {
 			Message: "Multiple environments are detected. You want to operate",
 			Options: options,
 		}
-		util.AssertNoError(survey.AskOne(pt, &result))
-		ActiveEnvironment = Environment(result)
+		if err := survey.AskOne(pt, &result); err == nil {
+			ActiveEnvironment = Environment(result)
+		} else {
+			fmt.Printf("User interruptd, bye!")
+			os.Exit(0)
+		}
 	}
 }
 
 // Check and initialize environments
 func Initialize() {
-	setSurveyTemplate()
+	template.SetSurveyTemplate()
 
+	extraCmds := DefaultCommands
 	for k, v := range Registers {
 		if env, err := v(); err == nil {
 			Environments[k] = env
+			extraCmds = append(extraCmds, env.Commands...)
+		}
+	}
+
+	for _, v := range extraCmds {
+		var envs []Environment
+		if len(v.Environments) == 0 {
+			envs = []Environment{Docker, Kubernetes, Istio, Rancher}
+		} else {
+			envs = v.Environments
+		}
+		for _, e := range envs {
+			if env, ok := Environments[e]; ok {
+				env.MainSuggestion = append(env.MainSuggestion, prompt.Suggest{Text: v.Text, Description: v.Description})
+			}
 		}
 	}
 }
 
-func GetActive() *Prompt {
+func GetActive() *Runtime {
 	return Environments[ActiveEnvironment]
 }
 
@@ -102,3 +123,8 @@ func GetActiveExecutor() prompt.Executor {
 		GetActive().Executor(cmd)
 	}
 }
+
+func GetKubernetes() *Runtime { return Environments[Kubernetes] }
+func GetDocker() *Runtime     { return Environments[Docker] }
+func GetIstio() *Runtime      { return Environments[Istio] }
+func GetRancher() *Runtime    { return Environments[Rancher] }

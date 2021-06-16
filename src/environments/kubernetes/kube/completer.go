@@ -1,6 +1,8 @@
 package kube
 
 import (
+	"context"
+	"github.com/fenixsoft/fenix-cli/src/environments"
 	"os"
 	"path/filepath"
 	"strings"
@@ -36,7 +38,7 @@ func NewCompleter() (*Completer, error) {
 		return nil, err
 	}
 
-	namespaces, err := client.CoreV1().Namespaces().List(metav1.ListOptions{})
+	namespaces, err := client.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		if statusError, ok := err.(*errors.StatusError); ok && statusError.Status().Code == 403 {
 			namespaces = nil
@@ -53,9 +55,10 @@ func NewCompleter() (*Completer, error) {
 }
 
 type Completer struct {
-	Namespace     string
-	NamespaceList *corev1.NamespaceList
-	Client        *kubernetes.Clientset
+	Namespace         string
+	NamespaceList     *corev1.NamespaceList
+	Client            *kubernetes.Clientset
+	KubernetesRuntime *environments.Runtime
 }
 
 func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {

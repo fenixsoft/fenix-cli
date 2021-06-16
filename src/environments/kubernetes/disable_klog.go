@@ -8,7 +8,7 @@ import (
 
 func DisableKlog() {
 	klog.SetOutput(ioutil.Discard)
-	klog.InitFlags(nil)
+	// klog.InitFlags(nil)
 	flag.Set("logtostderr", "false")
 	flag.Set("stderrthreshold", "4")
 	flag.Parse()

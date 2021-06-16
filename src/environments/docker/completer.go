@@ -214,9 +214,9 @@ func optionValueCompleter(args []string, currentArg string) []prompt.Suggest {
 func argumentsCompleter(args []string, currentArg string) []prompt.Suggest {
 	l := len(args)
 	if l == 0 {
-		return MajorCommands
+		return DockerRuntime.MainSuggestion
 	} else if l == 1 {
-		return prompt.FilterHasPrefix(MajorCommands, args[0], true)
+		return prompt.FilterHasPrefix(DockerRuntime.MainSuggestion, args[0], true)
 	}
 
 	switch args[0] {

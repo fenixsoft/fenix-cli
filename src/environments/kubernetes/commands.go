@@ -7,6 +7,7 @@ import (
 	"github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
 	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes/kube"
+	"github.com/fenixsoft/fenix-cli/src/internal/krew"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
 	"io"
 	"k8s.io/client-go/kubernetes"
@@ -15,8 +16,37 @@ import (
 
 var ExtraCommands = []environments.Command{
 	{
+		Text:         "x-context",
+		Description:  "Select the cluster for kubernetes management",
+		Environments: []environments.Environment{environments.Kubernetes, environments.Istio},
+		MatchFn:      environments.IgnoreCaseMatch,
+		Fn: func(args []string, writer io.Writer) {
+			// refresh for new namespace
+			if c, err := kube.NewCompleter(); err != nil {
+				Completer = c
+			}
+
+			var ctx []string
+			sug := kube.GetContextSuggestions()
+			for _, s := range sug {
+				ctx = append(ctx, s.Text)
+			}
+
+			var ret string
+			pt := &survey.Select{
+				Message: "Select active cluster context: ",
+				Options: ctx,
+			}
+			if err := survey.AskOne(pt, &ret); err != nil {
+				_, _ = writer.Write([]byte(err.Error()))
+			} else {
+				environments.Executor("kubectl", "config use-context "+ret)
+			}
+		},
+	},
+	{
 		Text:         "x-namespace",
-		Description:  "Select a namespace for current kubernetes management",
+		Description:  "Select the namespace for kubernetes management",
 		Environments: []environments.Environment{environments.Kubernetes, environments.Istio},
 		MatchFn:      environments.IgnoreCaseMatch,
 		Fn: func(args []string, writer io.Writer) {
@@ -35,11 +65,13 @@ var ExtraCommands = []environments.Command{
 				Message: "Select active namespace: ",
 				Options: ns,
 			}
-			util.AssertNoError(survey.AskOne(pt, &ret))
-
-			// execute : kubectl config set-context --current --namespace=<NS>
-			environments.Executor("kubectl", "config set-context --current --namespace="+ret)
-			Completer.Namespace = ret
+			if err := survey.AskOne(pt, &ret); err != nil {
+				_, _ = writer.Write([]byte(err.Error()))
+			} else {
+				// execute : kubectl config set-context --current --namespace=<NS>
+				environments.Executor("kubectl", "config set-context --current --namespace="+ret)
+				Completer.Namespace = ret
+			}
 		},
 	},
 	{
@@ -217,6 +249,91 @@ var ExtraCommands = []environments.Command{
 					environments.Executor("kubectl", answers.Operation+" "+resType+" "+strings.TrimSpace(strings.Split(o, "|")[0]))
 				}
 			}
+		},
+	},
+	{
+		Text:         "x-sniff",
+		Description:  "Get a capture of the network activity between services.",
+		Environments: []environments.Environment{environments.Kubernetes},
+		MatchFn:      environments.StartWithMatch,
+		Fn: func(args []string, writer io.Writer) {
+			if len(args) <= 1 || args[1] == "" {
+				_, _ = writer.Write([]byte("Provide an available pod name for x-sniff command\n"))
+				return
+			}
+			if !krew.IsTSharkAvailable() {
+				_, _ = writer.Write([]byte("" +
+					"TShark is not available, install it first\n" +
+					"eg: " +
+					"sudo add-apt-repository ppa:wireshark-dev/stable\n" +
+					"sudo apt install tshark\n"))
+				return
+			}
+			pt := &survey.Select{
+				Message: "Which type you want to start capture it's traffic ?",
+				Options: []string{"summary", "detail"},
+			}
+			var op string
+			_ = survey.AskOne(pt, &op)
+			if op == "summary" {
+				op = " -p -f \"port 80\" -o - | tshark -Y http --export-objects \"http,data\" -r -"
+			} else {
+				op = " -p -f \"port 80\" -o - | tshark -Y http -V -r -"
+			}
+			krew.RunAction([]string{"install", "sniff"})
+			environments.Executor("kubectl", "sniff "+args[1]+op)
+		},
+	},
+	{
+		Text:         "x-lens",
+		Description:  "Show pod-related resource information.",
+		Environments: []environments.Environment{environments.Kubernetes},
+		MatchFn:      environments.StartWithMatch,
+		Fn: func(args []string, writer io.Writer) {
+			if len(args) <= 1 || args[1] == "" {
+				_, _ = writer.Write([]byte("Provide an available pod name for x-lens command\n"))
+				return
+			}
+
+			krew.RunAction([]string{"install", "pod-lens"})
+			environments.Executor("kubectl", "pod-lens "+args[1])
+		},
+	},
+	{
+		Text:         "x-status",
+		Description:  "Print a human-friendly output that focuses on the status fields of the resources in kubernetes.",
+		Environments: []environments.Environment{environments.Kubernetes},
+		MatchFn:      environments.StartWithMatch,
+		Fn: func(args []string, writer io.Writer) {
+			if len(args) <= 1 || args[1] == "" {
+				_, _ = writer.Write([]byte("Provide an available resource type for x-status command\n"))
+				return
+			}
+
+			krew.RunAction([]string{"install", "status"})
+			environments.Executor("kubectl", "status "+args[1])
+		},
+	},
+	{
+		Text:         "x-open",
+		Description:  "Open the kubernetes url for the specified service in your browser.",
+		Environments: []environments.Environment{environments.Kubernetes},
+		MatchFn:      environments.StartWithMatch,
+		Fn: func(args []string, writer io.Writer) {
+			if len(args) <= 1 || args[1] == "" {
+				_, _ = writer.Write([]byte("Provide an available service name for x-open command\n"))
+				return
+			}
+			if !krew.IsXDGAvailable() {
+				_, _ = writer.Write([]byte("" +
+					"xdg-open is not available, install it first\n" +
+					"eg: " +
+					"sudo apt-get install -y xdg-utils\n"))
+				return
+			}
+
+			krew.RunAction([]string{"install", "open-svc"})
+			environments.Executor("kubectl", "open-svc "+strings.Join(args[1:], " "))
 		},
 	},
 }

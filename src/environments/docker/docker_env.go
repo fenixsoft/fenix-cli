@@ -10,8 +10,9 @@ import (
 )
 
 var dockerClient *docker.Client
+var DockerRuntime *environments.Runtime
 
-func RegisterEnv() (*environments.Prompt, error) {
+func RegisterEnv() (*environments.Runtime, error) {
 	dockerClient, _ = docker.NewEnvClient()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -20,21 +21,14 @@ func RegisterEnv() (*environments.Prompt, error) {
 		return nil, err
 	}
 
-	// register global commands
-	for _, cmd := range environments.DefaultCommands {
-		suggest := prompt.Suggest{
-			Text:        cmd.Text,
-			Description: cmd.Description,
-		}
-		MajorCommands = append(MajorCommands, suggest)
-	}
-
-	return &environments.Prompt{
-		Prefix:    "docker",
-		Completer: completer,
+	DockerRuntime = &environments.Runtime{
+		Prefix:         "docker",
+		Completer:      completer,
+		Commands:       ExtraCommands,
+		MainSuggestion: MajorCommands,
 		Executor: environments.GetDefaultExecutor("docker", func() {
 			lastQueryResult = []prompt.Suggest{}
 		}),
-		Commands: ExtraCommands,
-	}, nil
+	}
+	return DockerRuntime, nil
 }

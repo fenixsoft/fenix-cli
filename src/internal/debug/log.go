@@ -51,3 +51,10 @@ func Log(msg string) {
 	calldepth := 2
 	writeWithSync(calldepth, msg)
 }
+
+func AssertNoError(err error) {
+	if err == nil {
+		return
+	}
+	panic(err)
+}

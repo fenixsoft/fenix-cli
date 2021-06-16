@@ -6,13 +6,6 @@ import (
 	"unsafe"
 )
 
-func AssertNoError(err error) {
-	if err == nil {
-		return
-	}
-	panic(err)
-}
-
 func Slice(slice interface{}, newSliceType reflect.Type) interface{} {
 	sv := reflect.ValueOf(slice)
 	if sv.Kind() != reflect.Slice {

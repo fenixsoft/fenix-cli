@@ -43,8 +43,6 @@ var Commands = []prompt.Suggest{
 	{Text: "taint", Description: "Update the taints on one or more nodes."},
 	{Text: "debug", Description: "Debug cluster resources using interactive debugging containers."},
 	{Text: "kustomize", Description: "Build a set of KRM resources using a 'kustomization.yaml' file."},
-	{Text: "x-namespace", Description: "Select a namespace for current kubernetes management"},
-	{Text: "x-batch", Description: "Batch management of resources"},
 }
 
 var xBatchTypes = []prompt.Suggest{
@@ -131,9 +129,9 @@ var resourceTypes = []prompt.Suggest{
 
 func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt.Suggest {
 	if len(args) == 0 {
-		return Commands
+		return c.KubernetesRuntime.MainSuggestion
 	} else if len(args) == 1 {
-		return prompt.FilterHasPrefix(Commands, args[0], true)
+		return prompt.FilterHasPrefix(c.KubernetesRuntime.MainSuggestion, args[0], true)
 	}
 
 	majorCmd := strings.ToLower(args[0])
@@ -360,7 +358,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 				return prompt.FilterContains(GetJobSuggestions(c.Client, namespace), argument, true)
 			}
 		}
-	case "logs":
+	case "logs", "x-sniff", "x-lens":
 		if len(args) == 2 {
 			return prompt.FilterContains(GetPodSuggestions(c.Client, namespace), args[1], true)
 		}
@@ -433,7 +431,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 		if len(args) == 3 {
 			switch subCmd {
 			case "use-context":
-				return prompt.FilterContains(getContextSuggestions(), argument, true)
+				return prompt.FilterContains(GetContextSuggestions(), argument, true)
 			}
 		}
 	case "cluster-info":
@@ -464,6 +462,10 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 	case "x-batch":
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(xBatchTypes, subCmd, true)
+		}
+	case "x-open":
+		if len(args) == 2 {
+			return prompt.FilterContains(GetServiceSuggestions(c.Client, namespace), subCmd, true)
 		}
 	default:
 		return []prompt.Suggest{}

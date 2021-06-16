@@ -108,7 +108,7 @@ func HelpInfo(args []string, out io.Writer) {
 	table := tablewriter.NewWriter(out)
 	table.SetHeader([]string{"Command", "Hotkey", "Description", "Environment"})
 	table.SetBorders(tablewriter.Border{Left: false, Top: false, Right: false, Bottom: false})
-	table.SetColWidth(100)
+	table.SetColWidth(120)
 	table.SetCenterSeparator("|")
 	cmds := DefaultCommands
 	for _, v := range Environments {

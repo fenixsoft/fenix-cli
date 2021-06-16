@@ -66,7 +66,6 @@ var MajorCommands = []prompt.Suggest{
 	{Text: "version", Description: "Show the Docker version information"},
 	{Text: "volume", Description: "Manage volumes"},
 	{Text: "wait", Description: "Block until one or more containers stop, then print their exit codes"},
-	{Text: "x-batch", Description: "Batch management of containers and images"},
 }
 
 var subCommands = map[string][]prompt.Suggest{

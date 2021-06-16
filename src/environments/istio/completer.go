@@ -9,7 +9,9 @@ import (
 	"strings"
 )
 
-type IstioCompleter struct{}
+type IstioCompleter struct {
+	IstioRuntime *environments.Runtime
+}
 
 func NewCompleter() (*IstioCompleter, error) {
 	// only support Istio over Kubernetes
@@ -56,7 +58,7 @@ func (c *IstioCompleter) Complete(d prompt.Document) []prompt.Suggest {
 		}
 	}
 
-	return argumentsCompleter(kubernetes.Completer.Namespace, args, w)
+	return argumentsCompleter(c.IstioRuntime, kubernetes.Completer.Namespace, args, w)
 }
 
 func optionCompleter(args []string) []prompt.Suggest {
@@ -184,11 +186,11 @@ func getPodSuggestion(namespace string) []prompt.Suggest {
 	return kube.GetPodSuggestions(kubernetes.Completer.Client, namespace)
 }
 
-func argumentsCompleter(namespace string, args []string, currentArg string) []prompt.Suggest {
+func argumentsCompleter(istio *environments.Runtime, namespace string, args []string, currentArg string) []prompt.Suggest {
 	if len(args) == 0 {
-		return MajorCommands
+		return istio.MainSuggestion
 	} else if len(args) == 1 {
-		return prompt.FilterHasPrefix(MajorCommands, args[0], true)
+		return prompt.FilterHasPrefix(istio.MainSuggestion, args[0], true)
 	}
 
 	first := args[0]

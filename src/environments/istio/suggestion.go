@@ -23,7 +23,6 @@ var MajorCommands = []prompt.Suggest{
 	{Text: "validate", Description: "Validate Istio policy and rules files"},
 	{Text: "verify-install", Description: "verify-install verifies Istio installation status against the installation file you specified when you installed Istio"},
 	{Text: "version", Description: "Prints out build version information"},
-	{Text: "x-namespace", Description: "Select a namespace for current kubernetes management"},
 }
 
 var optionGlobal = []prompt.Suggest{
