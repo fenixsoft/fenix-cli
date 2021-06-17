@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 main
+fenix-cli
 *.exe
 *.exe~
 *.dll
