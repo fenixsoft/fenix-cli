@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
 	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes"
+	"github.com/fenixsoft/fenix-cli/src/internal/krew"
+	"github.com/pkg/errors"
 )
 
 var Completer *IstioCompleter
@@ -12,6 +14,8 @@ var Completer *IstioCompleter
 func RegisterEnv() (*environments.Runtime, error) {
 	if c, err := NewCompleter(); err != nil {
 		return nil, err
+	} else if !krew.IsIstiocltAvailable() {
+		return nil, errors.New("istio is not available")
 	} else {
 		Completer = c
 

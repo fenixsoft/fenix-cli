@@ -465,7 +465,11 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 		}
 	case "x-open":
 		if len(args) == 2 {
-			return prompt.FilterContains(GetServiceSuggestions(c.Client, namespace), subCmd, true)
+			return prompt.FilterHasPrefix(GetServiceSuggestions(c.Client, namespace), subCmd, true)
+		}
+	case "x-status":
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(resourceTypes, subCmd, true)
 		}
 	default:
 		return []prompt.Suggest{}

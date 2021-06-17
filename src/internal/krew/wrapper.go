@@ -26,3 +26,11 @@ func IsXDGAvailable() bool {
 	}
 	return true
 }
+
+func IsIstiocltAvailable() bool {
+	cmd := exec.Command("istioctl", "version")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+	return true
+}

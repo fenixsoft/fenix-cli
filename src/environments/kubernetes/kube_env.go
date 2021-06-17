@@ -15,8 +15,6 @@ func Complete(d prompt.Document) []prompt.Suggest {
 }
 
 func RegisterEnv() (*environments.Runtime, error) {
-	DisableKlog()
-
 	if c, err := kube.NewCompleter(); err != nil {
 		return nil, err
 	} else {

@@ -18,6 +18,7 @@ import (
 
 func NewCompleter() (*Completer, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	loadingRules.WarnIfAllMissing = false
 	loader := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		loadingRules,
 		&clientcmd.ConfigOverrides{},

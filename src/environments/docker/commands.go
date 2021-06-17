@@ -84,7 +84,7 @@ var ExtraCommands = []environments.Command{
 			if err == terminal.InterruptErr {
 				_, _ = writer.Write([]byte("operation interrupted\n"))
 			} else if err != nil {
-				panic(err)
+				_, _ = writer.Write([]byte(err.Error() + "\n"))
 			}
 
 			if answers.Confirm {

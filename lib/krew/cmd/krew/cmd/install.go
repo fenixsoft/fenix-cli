@@ -157,7 +157,7 @@ Remarks:
 					ArchiveFileOverride: *archiveFileOverride,
 				})
 				if err == installation.ErrIsAlreadyInstalled {
-					klog.Warningf("Skipping plugin %q, it is already installed", plugin.Name)
+					// klog.Warningf("Skipping plugin %q, it is already installed", plugin.Name)
 					continue
 				}
 				if err != nil {

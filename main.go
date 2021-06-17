@@ -35,7 +35,6 @@ func main() {
 		prompt.OptionLivePrefix(environments.LivePrefix),
 		prompt.OptionTitle("Fenix-CLI: Interactive Cloud-Native Environments Client"),
 		prompt.OptionInputTextColor(prompt.Yellow),
-
 		prompt.OptionCompletionOnDown(),
 		prompt.OptionMaxSuggestion(8),
 		prompt.OptionSuggestionTextColor(prompt.Black),
