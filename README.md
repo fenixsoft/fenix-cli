@@ -91,7 +91,7 @@ The main features of the subsequent versions of Fenix-CLI are planned as follows
 - Contributing:
   - Welcome pull request, feature request, and any form of collaboration.
 - Special thanks:
-  - Special thanks [c-bata](https://github.com/c-bata): The command line prompt framework of the Fenix-CLI project is based on [c-bata/go-prompt](https://github.com/c -bata/go-prompt), some Kubernetes prompt functions directly use [c-bata/kube-prompt](https://github.com/c-bata/kube-prompt) code.
+  - Special thanks [c-bata](https://github.com/c-bata): The command line prompt framework of the Fenix-CLI project is based on [c-bata/go-prompt](https://github.com/c-bata/go-prompt), some Kubernetes prompt functions directly use [c-bata/kube-prompt](https://github.com/c-bata/kube-prompt) code.
 
 ## License
 
