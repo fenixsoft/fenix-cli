@@ -140,7 +140,7 @@ func optionCompleter(args []string, long bool) []prompt.Suggest {
 	}
 
 	suggests = append(suggests, globalOptions...)
-	return prompt.FilterContains(suggests, args[len(args)-1], true)
+	return prompt.FilterHasPrefix(suggests, args[len(args)-1], true)
 }
 
 var globalOptions = []prompt.Suggest{

@@ -3,6 +3,7 @@ package environments
 import (
 	"bytes"
 	"github.com/c-bata/go-prompt"
+	"github.com/fenixsoft/fenix-cli/src/internal/debug"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
 	"github.com/olekukonko/tablewriter"
 	"io"
@@ -173,6 +174,17 @@ func init() {
 			Fn: func(args []string, out io.Writer) {
 				_, _ = out.Write([]byte("Bye!\n"))
 				os.Exit(0)
+			},
+		},
+		{
+			Text:        "clear",
+			Description: "Clean the screen",
+			MatchFn:     IgnoreCaseMatch,
+			Fn: func(args []string, out io.Writer) {
+				consoleWriter := prompt.GetConsoleWriter()
+				consoleWriter.EraseScreen()
+				consoleWriter.CursorGoTo(0, 0)
+				debug.AssertNoError(consoleWriter.Flush())
 			},
 		},
 	}

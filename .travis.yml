@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - "1.16"
+
+script:
+  - CGO_ENABLED=0 go build -ldflags "-s -w"
+  - ls
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: fenix-cli
+  skip_cleanup: true
+  on:
+    tags: true

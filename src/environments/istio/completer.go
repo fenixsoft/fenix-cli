@@ -48,17 +48,83 @@ func (c *IstioCompleter) Complete(d prompt.Document) []prompt.Suggest {
 		return optionCompleter(args)
 	}
 
-	l := len(args)
-	if l > 2 {
-		switch args[l-2] {
-		case "--meshConfigFile", "--injectConfigFile", "--filename", "--file", "--valuesFile", "--config-path", "-f":
-			return environments.GetPathSuggestion(args[l-1])
-		case "--istioNamespace", "--namespace", "--operatorNamespace", "--watchedNamespaces", "-n":
-			return kube.GetNameSpaceSuggestions(kubernetes.Completer.NamespaceList)
-		}
+	commandArgs, optionValue := excludeOptions(args)
+	if optionValue {
+		return optionValueCompleter(args, w)
 	}
 
-	return argumentsCompleter(c.IstioRuntime, kubernetes.Completer.Namespace, args, w)
+	return argumentsCompleter(c.IstioRuntime, kubernetes.Completer.Namespace, commandArgs, w)
+}
+
+func optionValueCompleter(args []string, currentArg string) []prompt.Suggest {
+	l := len(args)
+	var suggest []prompt.Suggest
+	if l < 2 {
+		return suggest
+	}
+	//cmd := args[0]
+	option := args[l-2]
+
+	switch option {
+	case "--context":
+		suggest = kube.GetContextSuggestions()
+	case "--istioNamespace", "--istio-namespace", "--namespace", "--operatorNamespace", "--watchedNamespaces", "-n":
+		suggest = kube.GetNameSpaceSuggestions(kubernetes.Completer.NamespaceList)
+	case "--kubeconfig", "--dir", "--filename", "--valuesFile", "--meshConfigFile", "--injectConfigFile",
+		"--manifests", "-d", "--cert-dir", "--config-path", "-f", "-c":
+		suggest = kube.GetPathSuggestion(currentArg)
+	case "--output", "-o":
+		suggest = []prompt.Suggest{{Text: "json"}, {Text: "yaml"}, {Text: "table"}, {Text: "short"}}
+	case "--serviceaccount":
+		suggest = kube.GetServiceAccountSuggestions(kubernetes.Completer.Client, kubernetes.Completer.Namespace)
+	case "--secret-name":
+		suggest = kube.GetSecretSuggestions(kubernetes.Completer.Client, kubernetes.Completer.Namespace)
+	}
+
+	return prompt.FilterContains(suggest, currentArg, true)
+}
+
+func excludeOptions(args []string) ([]string, bool) {
+	l := len(args)
+	if l == 0 {
+		return nil, false
+	}
+	filtered := make([]string, 0, l)
+	var optionValueFlag bool
+	for i := 0; i < len(args)-1; i++ {
+		if optionValueFlag {
+			optionValueFlag = false
+			continue
+		}
+		// ignore first or continuous blank spaces
+		if (i == 0 && args[0] == "") || (args[i] == "" && args[i-1] == "") {
+			continue
+		}
+
+		if strings.HasPrefix(args[i], "-") {
+			optionValueFlag = true
+			// we can specify option value like '-o=json'
+			if strings.Contains(args[i], "=") {
+				optionValueFlag = false
+			}
+			// these args are single switch arg
+			for _, s := range []string{
+				"--reset", "-r", "--recursive", "-R", "--use-kube", "-k", "--verbose", "-v", "--dry-run",
+				"--full-secrets", "--short", "-s", "--browser", "--ignoreUnmeshed", "--insecure", "--plaintext",
+				"--overwrite", "--skip-confirmation", "-y", "--overwrite", "--force", "--purge", "--remote",
+				"--autoregister", "--capture-dns", "--directory", "--referential", "-x", "--all-namespaces", "-A",
+				"--list-analyzers", "-L", "--ignoreUnmeshed", "--skip-controlplane",
+			} {
+				if strings.HasPrefix(args[i], s) {
+					optionValueFlag = false
+				}
+			}
+			continue
+		}
+		filtered = append(filtered, args[i])
+	}
+	filtered = append(filtered, args[len(args)-1])
+	return filtered, optionValueFlag
 }
 
 func optionCompleter(args []string) []prompt.Suggest {
@@ -76,6 +142,8 @@ func optionCompleter(args []string) []prompt.Suggest {
 			switch args[1] {
 			case "log":
 				suggests = optionAdminLog
+			default:
+				suggests = optionAdmin
 			}
 		} else {
 			suggests = optionAdmin
@@ -202,7 +270,7 @@ func argumentsCompleter(istio *environments.Runtime, namespace string, args []st
 			}
 			return prompt.FilterHasPrefix(subcommands, args[1], true)
 		} else if len(args) == 3 {
-			return prompt.FilterFuzzy(getPodSuggestion(namespace), currentArg, true)
+			return prompt.FilterContains(getPodSuggestion(namespace), currentArg, true)
 		}
 	case "analyze":
 		return environments.GetPathSuggestion(currentArg)
