@@ -149,7 +149,7 @@ Remarks:
 			var returnErr error
 			for _, entry := range install {
 				plugin := entry.p
-				fmt.Fprintf(os.Stderr, "Installing plugin: %s\n", plugin.Name)
+				//fmt.Fprintf(os.Stderr, "Installing plugin: %s\n", plugin.Name)
 				err := installation.Install(paths, plugin, entry.indexName, installation.InstallOpts{
 					ArchiveFileOverride: *archiveFileOverride,
 				})

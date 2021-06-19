@@ -97,17 +97,17 @@ func getImageID(image types.ImageSummary) string {
 	if strings.Contains(id, "@sha256") {
 		id = id[0:strings.Index(id, "@sha256")]
 	}
-	if id == "" || id == "<none>:<none>" {
-		return image.ID[7:19]
-	} else {
-		return id
+	if id == "" {
+		id = image.ID[7:19]
 	}
+	return fmt.Sprintf("%-64v", id)
 }
 
-func getImageDescription(image types.ImageInspect) string {
-	desc := ""
-	for _, v := range image.Config.Entrypoint {
-		desc += v + " "
+func getImageDescription(image types.ImageSummary, inspect types.ImageInspect) string {
+	size := float64(inspect.Size) / (1024 * 1024)
+	desc := fmt.Sprintf("%v | %6.2f MB | %v", inspect.ID[7:19], size, inspect.Created[0:10])
+	if image.ParentID != "" {
+		desc += " | Parent[" + image.ParentID[7:19] + "]"
 	}
 	return desc
 }
@@ -118,7 +118,7 @@ func imagesSuggestion() []prompt.Suggest {
 
 	for _, image := range images {
 		ins, _, _ := dockerClient.ImageInspectWithRaw(context.Background(), image.ID)
-		suggestions = append(suggestions, prompt.Suggest{Text: getImageID(image), Description: getImageDescription(ins)})
+		suggestions = append(suggestions, prompt.Suggest{Text: getImageID(image), Description: getImageDescription(image, ins)})
 	}
 	return suggestions
 }

@@ -58,7 +58,7 @@ Compared with the official original clients of Docker, Kubernetes, and Istio, Fe
 - Installation: install the latest version of Fenix-CLI through the following script:
 
    ```bash
-   curl -L https://icyfenix.cn/fenix-cli/dl.sh | sh -
+   curl -sL https://icyfenix.cn/fenix-cli/dl.sh | sh -
    ```
 
 - Manual installation: if you need other versions, you can get the executable file of Fenix-CLI on the [GitHub Release](https://github.com/fenixsoft/fenix-cli/releases) page.

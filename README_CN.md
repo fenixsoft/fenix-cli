@@ -58,7 +58,7 @@ Fenix-CLI是一款交互式的云原生运行环境客户端，目标是取代Do
 - 自动安装：通过以下脚本，自动安装最新版的Fenix-CLI：
 
    ```bash
-   curl -L https://icyfenix.cn/fenix-cli/dl.sh | sh -
+   curl -sL https://icyfenix.cn/fenix-cli/dl.sh | sh -
    ```
 
 - 手动安装：如需其他版本，可在[GitHub Release](https://github.com/fenixsoft/fenix-cli/releases)页面获取Fenix-CLI的可执行文件。

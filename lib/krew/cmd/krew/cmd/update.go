@@ -173,11 +173,11 @@ func ensureIndexesUpdated() error {
 			continue
 		}
 
-		if isDefaultIndex(idx.Name) {
-			fmt.Fprintln(os.Stderr, "Updated the local copy of plugin index.")
-		} else {
-			fmt.Fprintf(os.Stderr, "Updated the local copy of plugin index %q.\n", idx.Name)
-		}
+		//if isDefaultIndex(idx.Name) {
+		//	fmt.Fprintln(os.Stderr, "Updated the local copy of plugin index.")
+		//} else {
+		//	fmt.Fprintf(os.Stderr, "Updated the local copy of plugin index %q.\n", idx.Name)
+		//}
 	}
 
 	if len(preUpdatePlugins) != 0 {
