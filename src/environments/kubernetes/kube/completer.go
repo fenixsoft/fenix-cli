@@ -166,7 +166,7 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 	// namespace
 	if option == "-n" || option == "--namespace" {
 		return prompt.FilterHasPrefix(
-			GetNameSpaceSuggestions(c.NamespaceList),
+			GetNameSpaceSuggestions(c),
 			d.GetWordBeforeCursor(),
 			true,
 		), true

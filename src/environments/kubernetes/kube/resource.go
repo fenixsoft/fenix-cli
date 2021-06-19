@@ -587,7 +587,13 @@ func GetLimitRangeSuggestions(client *kubernetes.Clientset, namespace string) []
 
 /* NameSpaces */
 
-func GetNameSpaceSuggestions(namespaceList *corev1.NamespaceList) []prompt.Suggest {
+func GetNameSpaceSuggestions(completer *Completer) []prompt.Suggest {
+	// refresh namespace everytime
+	c, _ := NewCompleter()
+	completer.Namespace = c.Namespace
+	completer.NamespaceList = c.NamespaceList
+	namespaceList := completer.NamespaceList
+
 	if namespaceList == nil || len(namespaceList.Items) == 0 {
 		return []prompt.Suggest{}
 	}

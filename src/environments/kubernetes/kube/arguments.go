@@ -46,85 +46,85 @@ var Commands = []prompt.Suggest{
 }
 
 var xBatchTypes = []prompt.Suggest{
-	{Text: "ComponentStatuses", Alias: "cs", Description: "ComponentStatus (and ComponentStatusList) holds the cluster validation info. Deprecated: This API is deprecated in v1.19+"},
-	{Text: "ConfigMaps", Alias: "cm", Description: "ConfigMap holds configuration data for pods to consume."},
-	{Text: "DaemonSets", Alias: "ds", Description: "DaemonSet represents the configuration of a daemon set."},
-	{Text: "Deployments", Alias: "deploy", Description: "Deployment enables declarative updates for Pods and ReplicaSets."},
-	{Text: "Endpoints", Alias: "ep", Description: "Endpoints is a collection of endpoints that implement the actual service."},
-	{Text: "Ingresses", Alias: "ing", Description: "Ingress is a collection of rules that allow inbound connections to reach the endpoints defined by a backend."},
-	{Text: "Jobs", Description: "Job represents the configuration of a single job."},
-	{Text: "Limitranges", Alias: "limits", Description: "LimitRange sets resource usage limits for each kind of resource in a Namespace."},
-	{Text: "Namespaces", Alias: "ns", Description: "Namespace provides a scope for Names. Use of multiple namespaces is optional."},
-	{Text: "Nodes", Alias: "no", Description: "Node is a worker node in Kubernetes. Each node will have a unique identifier in the cache (i.e. in etcd)."},
-	{Text: "PersistentVolumeClaims", Alias: "pvc", Description: "PersistentVolumeClaim is a user's request for and claim to a persistent volume"},
-	{Text: "PersistentVolumes", Alias: "pv", Description: "PersistentVolume (PV) is a storage resource provisioned by an administrator."},
-	{Text: "Pod", Alias: "po", Description: "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts."},
-	{Text: "PodSecurityPolicies", Alias: "psp", Description: "PodSecurityPolicy governs the ability to make requests that affect the Security Context that will be applied to a pod and container. Deprecated in 1.21."},
-	{Text: "PodTemplates", Description: "PodTemplate describes a template for creating copies of a predefined pod."},
-	{Text: "Replicasets", Alias: "rs", Description: "ReplicaSet ensures that a specified number of pod replicas are running at any given time."},
-	{Text: "ReplicationControllers", Alias: "rc", Description: "ReplicationController represents the configuration of a replication controller."},
-	{Text: "ResourceQuotas", Alias: "quota", Description: "ResourceQuota sets aggregate quota restrictions enforced per namespace"},
-	{Text: "Secrets", Description: "Secret holds secret data of a certain type. The total bytes of the values in the Data field must be less than MaxSecretSize bytes."},
-	{Text: "ServiceAccounts", Alias: "sa", Description: "ServiceAccount binds together: a name, understood by users, and perhaps by peripheral systems, for an identity a principal that can be authenticated and authorized a set of secrets"},
-	{Text: "Services", Alias: "svc", Description: "Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy."},
+	{Text: "componentstatuses", Alias: "cs", Description: "ComponentStatus (and ComponentStatusList) holds the cluster validation info. Deprecated: This API is deprecated in v1.19+"},
+	{Text: "configmaps", Alias: "cm", Description: "ConfigMap holds configuration data for pods to consume."},
+	{Text: "daemonsets", Alias: "ds", Description: "DaemonSet represents the configuration of a daemon set."},
+	{Text: "deployments", Alias: "deploy", Description: "Deployment enables declarative updates for Pods and ReplicaSets."},
+	{Text: "endpoints", Alias: "ep", Description: "Endpoints is a collection of endpoints that implement the actual service."},
+	{Text: "ingresses", Alias: "ing", Description: "Ingress is a collection of rules that allow inbound connections to reach the endpoints defined by a backend."},
+	{Text: "jobs", Description: "Job represents the configuration of a single job."},
+	{Text: "limitranges", Alias: "limits", Description: "LimitRange sets resource usage limits for each kind of resource in a Namespace."},
+	{Text: "namespaces", Alias: "ns", Description: "Namespace provides a scope for Names. Use of multiple namespaces is optional."},
+	{Text: "nodes", Alias: "no", Description: "Node is a worker node in Kubernetes. Each node will have a unique identifier in the cache (i.e. in etcd)."},
+	{Text: "persistentvolumeclaims", Alias: "pvc", Description: "PersistentVolumeClaim is a user's request for and claim to a persistent volume"},
+	{Text: "persistentvolumes", Alias: "pv", Description: "PersistentVolume (PV) is a storage resource provisioned by an administrator."},
+	{Text: "pod", Alias: "po", Description: "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts."},
+	{Text: "podsecuritypolicies", Alias: "psp", Description: "PodSecurityPolicy governs the ability to make requests that affect the Security Context that will be applied to a pod and container. Deprecated in 1.21."},
+	{Text: "podtemplates", Description: "PodTemplate describes a template for creating copies of a predefined pod."},
+	{Text: "replicasets", Alias: "rs", Description: "ReplicaSet ensures that a specified number of pod replicas are running at any given time."},
+	{Text: "replicationcontrollers", Alias: "rc", Description: "ReplicationController represents the configuration of a replication controller."},
+	{Text: "resourcequotas", Alias: "quota", Description: "ResourceQuota sets aggregate quota restrictions enforced per namespace"},
+	{Text: "secrets", Description: "Secret holds secret data of a certain type. The total bytes of the values in the Data field must be less than MaxSecretSize bytes."},
+	{Text: "serviceaccounts", Alias: "sa", Description: "ServiceAccount binds together: a name, understood by users, and perhaps by peripheral systems, for an identity a principal that can be authenticated and authorized a set of secrets"},
+	{Text: "services", Alias: "svc", Description: "Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy."},
 }
 
 var resourceTypes = []prompt.Suggest{
-	{Text: "ComponentStatuses", Alias: "cs", Description: "ComponentStatus (and ComponentStatusList) holds the cluster validation info. Deprecated: This API is deprecated in v1.19+"},
-	{Text: "ConfigMaps", Alias: "cm", Description: "ConfigMap holds configuration data for pods to consume."},
-	{Text: "DaemonSets", Alias: "ds", Description: "DaemonSet represents the configuration of a daemon set."},
-	{Text: "Deployments", Alias: "deploy", Description: "Deployment enables declarative updates for Pods and ReplicaSets."},
-	{Text: "Endpoints", Alias: "ep", Description: "Endpoints is a collection of endpoints that implement the actual service."},
-	{Text: "Events", Alias: "ev", Description: "Event is a report of an event somewhere in the cluster."},
-	{Text: "HorizontalPodAutoscaler", Alias: "hpa", Description: "HorizontalPodAutoscaler configuration of a horizontal pod autoscaler."},
-	{Text: "Ingresses", Alias: "ing", Description: "Ingress is a collection of rules that allow inbound connections to reach the endpoints defined by a backend."},
-	{Text: "Jobs", Description: "Job represents the configuration of a single job."},
-	{Text: "CronJobs", Alias: "cj", Description: "CronJob represents the configuration of a single cron job."},
+	{Text: "componentstatuses", Alias: "cs", Description: "ComponentStatus (and ComponentStatusList) holds the cluster validation info. Deprecated: This API is deprecated in v1.19+"},
+	{Text: "configmaps", Alias: "cm", Description: "ConfigMap holds configuration data for pods to consume."},
+	{Text: "daemonsets", Alias: "ds", Description: "DaemonSet represents the configuration of a daemon set."},
+	{Text: "deployments", Alias: "deploy", Description: "Deployment enables declarative updates for Pods and ReplicaSets."},
+	{Text: "endpoints", Alias: "ep", Description: "Endpoints is a collection of endpoints that implement the actual service."},
+	{Text: "events", Alias: "ev", Description: "Event is a report of an event somewhere in the cluster."},
+	{Text: "horizontalpodautoscaler", Alias: "hpa", Description: "HorizontalPodAutoscaler configuration of a horizontal pod autoscaler."},
+	{Text: "ingresses", Alias: "ing", Description: "Ingress is a collection of rules that allow inbound connections to reach the endpoints defined by a backend."},
+	{Text: "jobs", Description: "Job represents the configuration of a single job."},
+	{Text: "cronjobs", Alias: "cj", Description: "CronJob represents the configuration of a single cron job."},
 	{Text: "limitranges", Alias: "limits", Description: "LimitRange sets resource usage limits for each kind of resource in a Namespace."},
-	{Text: "Namespaces", Alias: "ns", Description: "Namespace provides a scope for Names. Use of multiple namespaces is optional."},
-	{Text: "NetworkPolicies", Alias: "netpol", Description: "NetworkPolicy describes what network traffic is allowed for a set of Pods"},
-	{Text: "Nodes", Alias: "no", Description: "Node is a worker node in Kubernetes. Each node will have a unique identifier in the cache (i.e. in etcd)."},
-	{Text: "PersistentVolumeClaims", Alias: "pvc", Description: "PersistentVolumeClaim is a user's request for and claim to a persistent volume"},
-	{Text: "PersistentVolumes", Alias: "pv", Description: "PersistentVolume (PV) is a storage resource provisioned by an administrator."},
-	{Text: "Pod", Alias: "po", Description: "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts."},
-	{Text: "PodSecurityPolicies", Alias: "psp", Description: "PodSecurityPolicy governs the ability to make requests that affect the Security Context that will be applied to a pod and container. Deprecated in 1.21."},
-	{Text: "PodTemplates", Description: "PodTemplate describes a template for creating copies of a predefined pod."},
-	{Text: "Replicasets", Alias: "rs", Description: "ReplicaSet ensures that a specified number of pod replicas are running at any given time."},
-	{Text: "ReplicationControllers", Alias: "rc", Description: "ReplicationController represents the configuration of a replication controller."},
-	{Text: "ResourceQuotas", Alias: "quota", Description: "ResourceQuota sets aggregate quota restrictions enforced per namespace"},
-	{Text: "Secrets", Description: "Secret holds secret data of a certain type. The total bytes of the values in the Data field must be less than MaxSecretSize bytes."},
-	{Text: "ServiceAccounts", Alias: "sa", Description: "ServiceAccount binds together: a name, understood by users, and perhaps by peripheral systems, for an identity a principal that can be authenticated and authorized a set of secrets"},
-	{Text: "Services", Alias: "svc", Description: "Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy."},
-	{Text: "StatefulSets", Alias: "sts", Description: "StatefulSet represents a set of pods with consistent identities."},
-	{Text: "StorageClasses", Alias: "sc", Description: "StorageClass describes the parameters for a class of storage for which PersistentVolumes can be dynamically provisioned."},
-	{Text: "Bindings", Description: "Binding ties one object to another"},
-	{Text: "MutatingWebhookConfigurations", Description: "MutatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and may change the object."},
-	{Text: "ValidatingWebhookConfigurations", Description: "ValidatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and object without changing it."},
-	{Text: "CustomResourceDefinitions", Alias: "crd", Description: "CustomResourceDefinition represents a resource that should be exposed on the API server."},
-	{Text: "APIServices", Description: "APIService represents a server for a particular GroupVersion. Name must be \"version.group\"."},
-	{Text: "ControllerRevisions", Description: "ControllerRevision implements an immutable snapshot of state data."},
-	{Text: "TokenReviews", Description: "TokenReview attempts to authenticate a token to a known user."},
-	{Text: "LocalSubjectAccessReviews", Description: "LocalSubjectAccessReview checks whether or not a user or group can perform an action in a given namespace."},
-	{Text: "SelfSubjectAccessReviews", Description: "SelfSubjectAccessReview checks whether or the current user can perform an action."},
+	{Text: "namespaces", Alias: "ns", Description: "Namespace provides a scope for Names. Use of multiple namespaces is optional."},
+	{Text: "networkpolicies", Alias: "netpol", Description: "NetworkPolicy describes what network traffic is allowed for a set of Pods"},
+	{Text: "nodes", Alias: "no", Description: "Node is a worker node in Kubernetes. Each node will have a unique identifier in the cache (i.e. in etcd)."},
+	{Text: "persistentvolumeclaims", Alias: "pvc", Description: "PersistentVolumeClaim is a user's request for and claim to a persistent volume"},
+	{Text: "persistentvolumes", Alias: "pv", Description: "PersistentVolume (PV) is a storage resource provisioned by an administrator."},
+	{Text: "pod", Alias: "po", Description: "Pod is a collection of containers that can run on a host. This resource is created by clients and scheduled onto hosts."},
+	{Text: "podsecuritypolicies", Alias: "psp", Description: "PodSecurityPolicy governs the ability to make requests that affect the Security Context that will be applied to a pod and container. Deprecated in 1.21."},
+	{Text: "podtemplates", Description: "PodTemplate describes a template for creating copies of a predefined pod."},
+	{Text: "replicasets", Alias: "rs", Description: "ReplicaSet ensures that a specified number of pod replicas are running at any given time."},
+	{Text: "replicationcontrollers", Alias: "rc", Description: "ReplicationController represents the configuration of a replication controller."},
+	{Text: "resourcequotas", Alias: "quota", Description: "ResourceQuota sets aggregate quota restrictions enforced per namespace"},
+	{Text: "secrets", Description: "Secret holds secret data of a certain type. The total bytes of the values in the Data field must be less than MaxSecretSize bytes."},
+	{Text: "serviceaccounts", Alias: "sa", Description: "ServiceAccount binds together: a name, understood by users, and perhaps by peripheral systems, for an identity a principal that can be authenticated and authorized a set of secrets"},
+	{Text: "services", Alias: "svc", Description: "Service is a named abstraction of software service (for example, mysql) consisting of local port (for example 3306) that the proxy listens on, and the selector that determines which pods will answer requests sent through the proxy."},
+	{Text: "statefulsets", Alias: "sts", Description: "StatefulSet represents a set of pods with consistent identities."},
+	{Text: "storageclasses", Alias: "sc", Description: "StorageClass describes the parameters for a class of storage for which PersistentVolumes can be dynamically provisioned."},
+	{Text: "bindings", Description: "Binding ties one object to another"},
+	{Text: "mutatingwebhookconfigurations", Description: "MutatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and may change the object."},
+	{Text: "validatingwebhookconfigurations", Description: "ValidatingWebhookConfiguration describes the configuration of and admission webhook that accept or reject and object without changing it."},
+	{Text: "customresourcedefinitions", Alias: "crd", Description: "CustomResourceDefinition represents a resource that should be exposed on the API server."},
+	{Text: "apiservices", Description: "APIService represents a server for a particular GroupVersion. Name must be \"version.group\"."},
+	{Text: "controllerrevisions", Description: "ControllerRevision implements an immutable snapshot of state data."},
+	{Text: "tokenreviews", Description: "TokenReview attempts to authenticate a token to a known user."},
+	{Text: "localsubjectaccessreviews", Description: "LocalSubjectAccessReview checks whether or not a user or group can perform an action in a given namespace."},
+	{Text: "selfsubjectaccessreviews", Description: "SelfSubjectAccessReview checks whether or the current user can perform an action."},
 	{Text: "selfsubjectrulesreviews", Description: "SelfSubjectRulesReview enumerates the set of actions the current user can perform within a namespace."},
-	{Text: "SubjectAccessReviews", Description: "SubjectAccessReview checks whether or not a user or group can perform an action."},
-	{Text: "CertificateSigningRequests", Alias: "csr", Description: "CertificateSigningRequest objects provide a mechanism to obtain x509 certificates by submitting a certificate signing request, and having it asynchronously approved and issued."},
-	{Text: "Leases", Description: "Lease defines a lease concept."},
-	{Text: "EndpointSlices", Description: "EndpointSlice represents a subset of the endpoints that implement a service."},
-	{Text: "FlowSchemas", Description: "FlowSchema defines the schema of a group of flows. Note that a flow is made up of a set of inbound API requests with similar attributes and is identified by a pair of strings: the name of the FlowSchema and a \"flow distinguisher\"."},
-	{Text: "PriorityLevelConfigurations", Description: "PriorityLevelConfiguration represents the configuration of a priority level."},
-	{Text: "IngressClasses", Description: "IngressClass represents the class of the Ingress, referenced by the Ingress Spec."},
-	{Text: "RuntimeClasses", Description: "RuntimeClass defines a class of container runtime supported in the cluster."},
-	{Text: "PodDisruptionBudgets", Alias: "pdb", Description: "PodDisruptionBudget is an object to define the max disruption that can be caused to a collection of pods"},
-	{Text: "ClusterRoleBindings", Description: "ClusterRoleBinding references a ClusterRole, but not contain it. It can reference a ClusterRole in the global namespace, and adds who information  via Subject."},
-	{Text: "ClusterRoles", Description: "ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding or ClusterRoleBinding."},
-	{Text: "RoleBindings", Description: "RoleBinding references a role, but does not contain it. It can reference a Role in the same namespace or a ClusterRole in the global namespace."},
-	{Text: "Roles", Description: "Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding."},
-	{Text: "PriorityClasses", Alias: "pc", Description: "PriorityClass defines mapping from a priority class name to the priority integer value."},
-	{Text: "CSIDrivers", Description: "CSIDriver captures information about a Container Storage Interface (CSI) volume driver deployed on the cluster."},
-	{Text: "CSINodes", Description: "CSINode holds information about all CSI drivers installed on a node. CSI  drivers do not need to create the CSINode object directly."},
-	{Text: "CSIStorageCapacities", Description: "CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given StorageClass, this describes the available capacity in a particular topology segment."},
-	{Text: "VolumeAttachments", Description: "VolumeAttachment captures the intent to attach or detach the specified volume to/from the specified node."},
+	{Text: "subjectaccessreviews", Description: "SubjectAccessReview checks whether or not a user or group can perform an action."},
+	{Text: "certificatesigningrequests", Alias: "csr", Description: "CertificateSigningRequest objects provide a mechanism to obtain x509 certificates by submitting a certificate signing request, and having it asynchronously approved and issued."},
+	{Text: "leases", Description: "Lease defines a lease concept."},
+	{Text: "endpointslices", Description: "EndpointSlice represents a subset of the endpoints that implement a service."},
+	{Text: "flowschemas", Description: "FlowSchema defines the schema of a group of flows. Note that a flow is made up of a set of inbound API requests with similar attributes and is identified by a pair of strings: the name of the FlowSchema and a \"flow distinguisher\"."},
+	{Text: "prioritylevelconfigurations", Description: "PriorityLevelConfiguration represents the configuration of a priority level."},
+	{Text: "ingressclasses", Description: "IngressClass represents the class of the Ingress, referenced by the Ingress Spec."},
+	{Text: "runtimeclasses", Description: "RuntimeClass defines a class of container runtime supported in the cluster."},
+	{Text: "poddisruptionbudgets", Alias: "pdb", Description: "PodDisruptionBudget is an object to define the max disruption that can be caused to a collection of pods"},
+	{Text: "clusterrolebindings", Description: "ClusterRoleBinding references a ClusterRole, but not contain it. It can reference a ClusterRole in the global namespace, and adds who information  via Subject."},
+	{Text: "clusterroles", Description: "ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding or ClusterRoleBinding."},
+	{Text: "rolebindings", Description: "RoleBinding references a role, but does not contain it. It can reference a Role in the same namespace or a ClusterRole in the global namespace."},
+	{Text: "roles", Description: "Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding."},
+	{Text: "priorityclasses", Alias: "pc", Description: "PriorityClass defines mapping from a priority class name to the priority integer value."},
+	{Text: "csidrivers", Description: "CSIDriver captures information about a Container Storage Interface (CSI) volume driver deployed on the cluster."},
+	{Text: "csinodes", Description: "CSINode holds information about all CSI drivers installed on a node. CSI  drivers do not need to create the CSINode object directly."},
+	{Text: "csistoragecapacities", Description: "CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given StorageClass, this describes the available capacity in a particular topology segment."},
+	{Text: "volumeattachments", Description: "VolumeAttachment captures the intent to attach or detach the specified volume to/from the specified node."},
 }
 
 func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt.Suggest {
@@ -166,7 +166,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 			case "limitranges", "limits":
 				return prompt.FilterContains(GetLimitRangeSuggestions(c.Client, namespace), argument, true)
 			case "namespaces", "ns":
-				return prompt.FilterContains(GetNameSpaceSuggestions(c.NamespaceList), argument, true)
+				return prompt.FilterContains(GetNameSpaceSuggestions(c), argument, true)
 			case "no", "nodes":
 				return prompt.FilterContains(GetNodeSuggestions(c.Client), argument, true)
 			case "po", "pod", "pods":
@@ -216,7 +216,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 			case "limitranges", "limits":
 				return prompt.FilterContains(GetLimitRangeSuggestions(c.Client, namespace), argument, true)
 			case "namespaces", "ns":
-				return prompt.FilterContains(GetNameSpaceSuggestions(c.NamespaceList), argument, true)
+				return prompt.FilterContains(GetNameSpaceSuggestions(c), argument, true)
 			case "no", "nodes":
 				return prompt.FilterContains(GetNodeSuggestions(c.Client), argument, true)
 			case "po", "pod", "pods":
@@ -247,13 +247,13 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 		}
 	case "create":
 		subcommands := []prompt.Suggest{
-			{Text: "ConfigMap", Description: "Create a configmap from a local file, directory or literal value"},
-			{Text: "Deployment", Description: "Create a deployment with the specified name."},
-			{Text: "Namespace", Description: "Create a namespace with the specified name"},
-			{Text: "Quota", Description: "Create a quota with the specified name."},
-			{Text: "Secret", Description: "Create a secret using specified subcommand"},
-			{Text: "Service", Description: "Create a service using specified subcommand."},
-			{Text: "ServiceAccount", Description: "Create a service account with the specified name"},
+			{Text: "configmap", Description: "Create a configmap from a local file, directory or literal value"},
+			{Text: "deployment", Description: "Create a deployment with the specified name."},
+			{Text: "namespace", Description: "Create a namespace with the specified name"},
+			{Text: "quota", Description: "Create a quota with the specified name."},
+			{Text: "secret", Description: "Create a secret using specified subcommand"},
+			{Text: "service", Description: "Create a service using specified subcommand."},
+			{Text: "serviceaccount", Description: "Create a service account with the specified name"},
 		}
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(subcommands, args[1], true)
@@ -279,7 +279,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 			case "limitranges", "limits":
 				return prompt.FilterContains(GetLimitRangeSuggestions(c.Client, namespace), argument, true)
 			case "namespaces", "ns":
-				return prompt.FilterContains(GetNameSpaceSuggestions(c.NamespaceList), argument, true)
+				return prompt.FilterContains(GetNameSpaceSuggestions(c), argument, true)
 			case "no", "nodes":
 				return prompt.FilterContains(GetNodeSuggestions(c.Client), argument, true)
 			case "po", "pod", "pods":
@@ -329,7 +329,7 @@ func (c *Completer) argumentsCompleter(namespace string, args []string) []prompt
 			case "limitranges", "limits":
 				return prompt.FilterContains(GetLimitRangeSuggestions(c.Client, namespace), argument, true)
 			case "namespaces", "ns":
-				return prompt.FilterContains(GetNameSpaceSuggestions(c.NamespaceList), argument, true)
+				return prompt.FilterContains(GetNameSpaceSuggestions(c), argument, true)
 			case "no", "nodes":
 				return prompt.FilterContains(GetNodeSuggestions(c.Client), argument, true)
 			case "po", "pod", "pods":

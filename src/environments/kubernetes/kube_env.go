@@ -2,6 +2,8 @@ package kubernetes
 
 import (
 	"fmt"
+	"github.com/fenixsoft/fenix-cli/src/internal/krew"
+
 	"github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
 	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes/kube"
@@ -23,7 +25,7 @@ func RegisterEnv() (*environments.Runtime, error) {
 		Completer.KubernetesRuntime = &environments.Runtime{
 			Prefix:         "kubectl",
 			Completer:      Complete,
-			Executor:       environments.GetDefaultExecutor("kubectl", nil),
+			Executor:       environments.GetDefaultExecutor("kubectl", nil, krew.GetBinPath()...),
 			Commands:       ExtraCommands,
 			MainSuggestion: kube.Commands,
 			LivePrefix: func() (prefix string, useLivePrefix bool) {

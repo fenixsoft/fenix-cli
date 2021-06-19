@@ -73,6 +73,10 @@ func GetRootCmd() *cobra.Command {
 	return rootCmd
 }
 
+func GetBinPath() string {
+	return environment.MustGetKrewPaths().BinPath()
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -113,9 +117,9 @@ func init() {
 
 func preRun(cmd *cobra.Command, _ []string) error {
 	// check must be done before ensureDirs, to detect krew's self-installation
-	if !internal.IsBinDirInPATH(paths) {
-		internal.PrintWarning(os.Stderr, internal.SetupInstructions()+"\n\n")
-	}
+	//if !internal.IsBinDirInPATH(paths) {
+	//	internal.PrintWarning(os.Stderr, internal.SetupInstructions()+"\n\n")
+	//}
 
 	if err := ensureDirs(paths.BasePath(),
 		paths.InstallPath(),

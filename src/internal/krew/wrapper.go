@@ -1,6 +1,7 @@
 package krew
 
 import (
+	"os"
 	"os/exec"
 	"sigs.k8s.io/krew/cmd/krew/cmd"
 )
@@ -9,6 +10,11 @@ func RunAction(args []string) {
 	rootCmd := cmd.GetRootCmd()
 	rootCmd.SetArgs(args)
 	_ = rootCmd.Execute()
+}
+
+func GetBinPath() []string {
+	path := cmd.GetBinPath() + ":" + os.Getenv("PATH")
+	return []string{"PATH=" + path}
 }
 
 func IsTSharkAvailable() bool {

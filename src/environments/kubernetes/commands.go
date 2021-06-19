@@ -10,9 +10,13 @@ import (
 	"github.com/fenixsoft/fenix-cli/src/internal/krew"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
 	"io"
-	"k8s.io/client-go/kubernetes"
+	k8s "k8s.io/client-go/kubernetes"
 	"strings"
 )
+
+var executor = func(args string) {
+	Completer.KubernetesRuntime.Executor(args)
+}
 
 var ExtraCommands = []environments.Command{
 	{
@@ -38,9 +42,9 @@ var ExtraCommands = []environments.Command{
 				Options: ctx,
 			}
 			if err := survey.AskOne(pt, &ret); err != nil {
-				_, _ = writer.Write([]byte(err.Error()))
+				_, _ = writer.Write([]byte(err.Error() + "\n"))
 			} else {
-				environments.Executor("kubectl", "config use-context "+ret)
+				executor("config use-context " + ret)
 			}
 		},
 	},
@@ -51,9 +55,7 @@ var ExtraCommands = []environments.Command{
 		MatchFn:      environments.IgnoreCaseMatch,
 		Fn: func(args []string, writer io.Writer) {
 			// refresh for new namespace
-			if c, err := kube.NewCompleter(); err != nil {
-				Completer = c
-			}
+			kube.GetNameSpaceSuggestions(Completer)
 
 			ns := make([]string, len(Completer.NamespaceList.Items))
 			for i := range Completer.NamespaceList.Items {
@@ -66,10 +68,10 @@ var ExtraCommands = []environments.Command{
 				Options: ns,
 			}
 			if err := survey.AskOne(pt, &ret); err != nil {
-				_, _ = writer.Write([]byte(err.Error()))
+				_, _ = writer.Write([]byte(err.Error() + "\n"))
 			} else {
 				// execute : kubectl config set-context --current --namespace=<NS>
-				environments.Executor("kubectl", "config set-context --current --namespace="+ret)
+				executor("config set-context --current --namespace=" + ret)
 				Completer.Namespace = ret
 			}
 		},
@@ -82,65 +84,65 @@ var ExtraCommands = []environments.Command{
 		Fn: func(args []string, writer io.Writer) {
 			defaultOp := []string{"delete", "describe", "edit"}
 			resources := map[string]struct {
-				fn  func(*kubernetes.Clientset, string) []prompt.Suggest
+				fn  func(*k8s.Clientset, string) []prompt.Suggest
 				ops []string
 			}{
 				"componentstatuses": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetComponentStatusCompletions(c)
 					},
 					ops: defaultOp,
 				},
 				"cc": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetComponentStatusCompletions(c)
 					},
 					ops: defaultOp,
 				},
 				"namespaces": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
-						return kube.GetNameSpaceSuggestions(Completer.NamespaceList)
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
+						return kube.GetNameSpaceSuggestions(Completer)
 					},
 					ops: defaultOp,
 				},
 				"ns": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
-						return kube.GetNameSpaceSuggestions(Completer.NamespaceList)
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
+						return kube.GetNameSpaceSuggestions(Completer)
 					},
 					ops: defaultOp,
 				},
 				"nodes": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetNodeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"no": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetNodeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"persistentvolumes": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetPersistentVolumeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"pv": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetPersistentVolumeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"podsecuritypolicies": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetPodSecurityPolicySuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"psp": {
-					fn: func(c *kubernetes.Clientset, s string) []prompt.Suggest {
+					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
 						return kube.GetPodSecurityPolicySuggestions(c)
 					},
 					ops: defaultOp,
@@ -246,7 +248,7 @@ var ExtraCommands = []environments.Command{
 			}
 			if answers.Confirm {
 				for _, o := range answers.Objective {
-					environments.Executor("kubectl", answers.Operation+" "+resType+" "+strings.TrimSpace(strings.Split(o, "|")[0]))
+					executor(answers.Operation + " " + resType + " " + strings.TrimSpace(strings.Split(o, "|")[0]))
 				}
 			}
 		},
@@ -281,7 +283,7 @@ var ExtraCommands = []environments.Command{
 				op = " -p -f \"port 80\" -o - | tshark -Y http -V -r -"
 			}
 			krew.RunAction([]string{"install", "sniff"})
-			environments.Executor("kubectl", "sniff "+args[1]+op)
+			executor("sniff " + args[1] + op)
 		},
 	},
 	{
@@ -296,7 +298,7 @@ var ExtraCommands = []environments.Command{
 			}
 
 			krew.RunAction([]string{"install", "pod-lens"})
-			environments.Executor("kubectl", "pod-lens "+args[1])
+			executor("pod-lens " + args[1])
 		},
 	},
 	{
@@ -311,7 +313,7 @@ var ExtraCommands = []environments.Command{
 			}
 
 			krew.RunAction([]string{"install", "status"})
-			environments.Executor("kubectl", "status "+args[1])
+			executor("status " + args[1])
 		},
 	},
 	{
@@ -333,7 +335,7 @@ var ExtraCommands = []environments.Command{
 			}
 
 			krew.RunAction([]string{"install", "open-svc"})
-			environments.Executor("kubectl", "open-svc "+strings.Join(args[1:], " "))
+			executor("open-svc " + strings.Join(args[1:], " "))
 		},
 	},
 }

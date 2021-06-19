@@ -9,16 +9,16 @@ import (
 	"strings"
 )
 
-func GetDefaultExecutor(env string, callback func()) prompt.Executor {
+func GetDefaultExecutor(runtime string, callback func(), env ...string) prompt.Executor {
 	return func(s string) {
-		Executor(env, s)
+		Executor(runtime, s, env...)
 		if callback != nil {
 			callback()
 		}
 	}
 }
 
-func Executor(program string, args string) {
+func Executor(program string, args string, env ...string) {
 	args = strings.TrimSpace(args)
 	if args == "" {
 		return
@@ -35,6 +35,8 @@ func Executor(program string, args string) {
 	}
 
 	cmd := exec.Command("/bin/sh", "-c", program+" "+args)
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, env...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -45,7 +47,7 @@ func Executor(program string, args string) {
 	return
 }
 
-func ExecuteAndGetResult(program string, args string) (int, string) {
+func ExecuteAndGetResult(program string, args string, env ...string) (int, string) {
 	args = strings.TrimSpace(args)
 	if args == "" {
 		return -1, ""
@@ -53,6 +55,8 @@ func ExecuteAndGetResult(program string, args string) (int, string) {
 
 	out := &bytes.Buffer{}
 	cmd := exec.Command("/bin/sh", "-c", program+" "+args)
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, env...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = out
 	if err := cmd.Run(); err != nil {

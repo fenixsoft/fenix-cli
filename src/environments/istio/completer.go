@@ -21,7 +21,7 @@ func NewCompleter() (*IstioCompleter, error) {
 	}
 	completer := &IstioCompleter{}
 	// check if istioctl is valid in PATH
-	code, msg := environments.ExecuteAndGetResult("echo", "version")
+	code, msg := environments.ExecuteAndGetResult("istioctl", "version")
 	if code == 0 {
 		return completer, nil
 	} else {
@@ -69,7 +69,7 @@ func optionValueCompleter(args []string, currentArg string) []prompt.Suggest {
 	case "--context":
 		suggest = kube.GetContextSuggestions()
 	case "--istioNamespace", "--istio-namespace", "--namespace", "--operatorNamespace", "--watchedNamespaces", "-n":
-		suggest = kube.GetNameSpaceSuggestions(kubernetes.Completer.NamespaceList)
+		suggest = kube.GetNameSpaceSuggestions(kubernetes.Completer)
 	case "--kubeconfig", "--dir", "--filename", "--valuesFile", "--meshConfigFile", "--injectConfigFile",
 		"--manifests", "-d", "--cert-dir", "--config-path", "-f", "-c":
 		suggest = kube.GetPathSuggestion(currentArg)
