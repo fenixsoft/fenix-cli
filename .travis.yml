@@ -4,8 +4,7 @@ go:
   - "1.16"
 
 script:
-  - CGO_ENABLED=0 go build -ldflags "-s -w"
-  - ls
+  - bash ./build/build.sh
 
 deploy:
   provider: releases

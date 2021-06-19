@@ -75,19 +75,6 @@ func AllMatch(text string, cmd string) bool {
 	return true
 }
 
-func Logo(args []string, out io.Writer) {
-	_, _ = out.Write([]byte("\n ________  ________  ____  _____  _____  ____  ____         ______  _____     _____  \n" +
-		"|_   __  ||_   __  ||_   \\|_   _||_   _||_  _||_  _|      .' ___  ||_   _|   |_   _| \n" +
-		"  | |_ \\_|  | |_ \\_|  |   \\ | |    | |    \\ \\  / /______ / .'   \\_|  | |       | |   \n" +
-		"  |  _|     |  _| _   | |\\ \\| |    | |     > `' <|______|| |         | |   _   | |   \n" +
-		" _| |_     _| |__/ | _| |_\\   |_  _| |_  _/ /'`\\ \\_      \\ `.___.'\\ _| |__/ | _| |_  \n" +
-		"|_____|   |________||_____|\\____||_____||____||____|      `.____ .'|________||_____| \n" +
-		"                                                                       v1.0.20210616  \n" +
-		"                                              https://github.com/fenixsoft/fenix-cli\n" +
-		"                                              Press key <F1> to get help information\n" +
-		"                                                                                     \n"))
-}
-
 func getKeyName(k prompt.Key) string {
 	if k >= prompt.F1 && k <= prompt.F12 {
 		return "F" + strconv.Itoa(int(k-prompt.F1+1))
