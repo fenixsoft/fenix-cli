@@ -17,19 +17,16 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"k8s.io/klog"
+	"net/http"
+	"os"
 
-	"sigs.k8s.io/krew/cmd/krew/cmd/internal"
 	"sigs.k8s.io/krew/internal/index/indexscanner"
 	"sigs.k8s.io/krew/internal/index/validation"
 	"sigs.k8s.io/krew/internal/installation"
 	"sigs.k8s.io/krew/internal/pathutil"
-	"sigs.k8s.io/krew/pkg/constants"
 	"sigs.k8s.io/krew/pkg/index"
 )
 
@@ -169,17 +166,17 @@ Remarks:
 					continue
 				}
 				fmt.Fprintf(os.Stderr, "Installed plugin: %s\n", plugin.Name)
-				output := fmt.Sprintf("Use this plugin:\n\tkubectl %s\n", plugin.Name)
-				if plugin.Spec.Homepage != "" {
-					output += fmt.Sprintf("Documentation:\n\t%s\n", plugin.Spec.Homepage)
-				}
-				if plugin.Spec.Caveats != "" {
-					output += fmt.Sprintf("Caveats:\n%s\n", indent(plugin.Spec.Caveats))
-				}
-				fmt.Fprintln(os.Stderr, indent(output))
-				if entry.indexName == constants.DefaultIndexName {
-					internal.PrintSecurityNotice(plugin.Name)
-				}
+				//output := fmt.Sprintf("Use this plugin:\n\tkubectl %s\n", plugin.Name)
+				//if plugin.Spec.Homepage != "" {
+				//	output += fmt.Sprintf("Documentation:\n\t%s\n", plugin.Spec.Homepage)
+				//}
+				//if plugin.Spec.Caveats != "" {
+				//	output += fmt.Sprintf("Caveats:\n%s\n", indent(plugin.Spec.Caveats))
+				//}
+				//fmt.Fprintln(os.Stderr, indent(output))
+				//if entry.indexName == constants.DefaultIndexName {
+				//	internal.PrintSecurityNotice(plugin.Name)
+				//}
 			}
 			if len(failed) > 0 {
 				return errors.Wrapf(returnErr, "failed to install some plugins: %+v", failed)
