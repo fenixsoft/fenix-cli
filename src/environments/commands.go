@@ -3,6 +3,7 @@ package environments
 import (
 	"bytes"
 	"github.com/c-bata/go-prompt"
+	"github.com/fenixsoft/fenix-cli/lib/go-ansi"
 	"github.com/fenixsoft/fenix-cli/src/internal/debug"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
 	"github.com/olekukonko/tablewriter"
@@ -93,7 +94,7 @@ func getEnv(envs []Environment) string {
 // print help information
 func HelpInfo(args []string, out io.Writer) {
 	Logo(args, out)
-	table := tablewriter.NewWriter(out)
+	table := tablewriter.NewWriter(ansi.NewAnsiStdout())
 	table.SetHeader([]string{"Command", "Hotkey", "Description", "Environment"})
 	table.SetBorders(tablewriter.Border{Left: false, Top: false, Right: false, Bottom: false})
 	table.SetColWidth(120)

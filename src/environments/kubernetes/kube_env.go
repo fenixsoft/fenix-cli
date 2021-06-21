@@ -2,11 +2,10 @@ package kubernetes
 
 import (
 	"fmt"
-	"github.com/fenixsoft/fenix-cli/src/internal/krew"
-
 	"github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
 	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes/kube"
+	"github.com/fenixsoft/fenix-cli/src/internal/krew"
 )
 
 var Completer *kube.Completer

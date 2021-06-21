@@ -105,10 +105,10 @@ func getImageID(image types.ImageSummary) string {
 
 func getImageDescription(image types.ImageSummary, inspect types.ImageInspect) string {
 	size := float64(inspect.Size) / (1024 * 1024)
-	desc := fmt.Sprintf("%v | %6.2f MB | %v", inspect.ID[7:19], size, inspect.Created[0:10])
-	if image.ParentID != "" {
-		desc += " | Parent[" + image.ParentID[7:19] + "]"
-	}
+	desc := fmt.Sprintf("%v | %8.2f MB | %v", inspect.ID[7:19], size, inspect.Created[0:10])
+	//if image.ParentID != "" {
+	//	desc += " | Parent[" + image.ParentID[7:19] + "]"
+	//}
 	return desc
 }
 

@@ -1,11 +1,16 @@
 package environments
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	prompt "github.com/c-bata/go-prompt"
+	"github.com/fenixsoft/fenix-cli/lib/go-ansi"
 	"github.com/fenixsoft/fenix-cli/src/internal/template"
+	"github.com/schollz/progressbar/v3"
 	"os"
+	"time"
 )
 
 type Runtime struct {
@@ -70,13 +75,34 @@ func SelectCurrentEnvironment() {
 func Initialize() {
 	template.SetSurveyTemplate()
 
+	bar := progressbar.NewOptions(len(Registers)+1,
+		progressbar.OptionSetWriter(ansi.NewAnsiStdout()),
+		progressbar.OptionEnableColorCodes(true),
+		progressbar.OptionShowIts(),
+		progressbar.OptionSetPredictTime(false),
+		progressbar.OptionSetWidth(40),
+		progressbar.OptionSetDescription("[light_blue]Scanning Environment...[reset]"),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "[yellow]=[reset]",
+			SaucerHead:    "[yellow]>[reset]",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}))
+
 	extraCmds := DefaultCommands
 	for k, v := range Registers {
-		if env, err := v(); err == nil {
+		_ = bar.Add(1)
+		if env, err := TimeoutRegister(v, 5*time.Second); err == nil {
 			Environments[k] = env
 			extraCmds = append(extraCmds, env.Commands...)
 		}
+		time.Sleep(100 * time.Millisecond)
 	}
+	_ = bar.Add(1)
+	// clear entire line and ove cursor to beginning of the line 1 lines down.
+	ansi.EraseInLine(2)
+	ansi.CursorNextLine(1)
 
 	for _, v := range extraCmds {
 		var envs []Environment
@@ -121,6 +147,29 @@ func GetActiveCompleter() prompt.Completer {
 func GetActiveExecutor() prompt.Executor {
 	return func(cmd string) {
 		GetActive().Executor(cmd)
+	}
+}
+
+func TimeoutRegister(fn Register, timeout time.Duration) (*Runtime, error) {
+	ctx := context.Background()
+	done := make(chan *Runtime, 1)
+	err := make(chan error, 1)
+
+	go func(ctx context.Context) {
+		if r, e := fn(); e != nil {
+			err <- e
+		} else {
+			done <- r
+		}
+	}(ctx)
+
+	select {
+	case r := <-done:
+		return r, nil
+	case e := <-err:
+		return nil, e
+	case <-time.After(timeout):
+		return nil, errors.New("execution timeout")
 	}
 }
 

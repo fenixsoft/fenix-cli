@@ -282,7 +282,7 @@ var ExtraCommands = []environments.Command{
 			} else {
 				op = " -p -f \"port 80\" -o - | tshark -Y http -V -r -"
 			}
-			krew.RunAction([]string{"install", "sniff"})
+			krew.CheckAndInstall("sniff")
 			executor("sniff " + args[1] + op)
 		},
 	},
@@ -296,8 +296,7 @@ var ExtraCommands = []environments.Command{
 				_, _ = writer.Write([]byte("Provide an available pod name for x-lens command\n"))
 				return
 			}
-
-			krew.RunAction([]string{"install", "pod-lens"})
+			krew.CheckAndInstall("pod-lens")
 			executor("pod-lens " + args[1])
 		},
 	},
@@ -312,7 +311,7 @@ var ExtraCommands = []environments.Command{
 				return
 			}
 
-			krew.RunAction([]string{"install", "status"})
+			krew.CheckAndInstall("status")
 			executor("status " + args[1])
 		},
 	},
@@ -334,7 +333,7 @@ var ExtraCommands = []environments.Command{
 				return
 			}
 
-			krew.RunAction([]string{"install", "open-svc"})
+			krew.CheckAndInstall("open-svc")
 			executor("open-svc " + strings.Join(args[1:], " "))
 		},
 	},

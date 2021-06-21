@@ -1,9 +1,11 @@
 package krew
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"sigs.k8s.io/krew/cmd/krew/cmd"
+	"strings"
 )
 
 func RunAction(args []string) {
@@ -12,8 +14,26 @@ func RunAction(args []string) {
 	_ = rootCmd.Execute()
 }
 
+func IsInstallPlugin(name string) bool {
+	ret, _ := cmd.GetInstalledPlugin()
+	for _, v := range ret {
+		if strings.EqualFold(v.Name, name) {
+			return true
+		}
+	}
+	return false
+
+}
+
+func CheckAndInstall(name string) {
+	if !IsInstallPlugin(name) {
+		fmt.Printf("Fetching plugin: %v \n", name)
+		RunAction([]string{"install", name})
+	}
+}
+
 func GetBinPath() []string {
-	path := cmd.GetBinPath() + ":" + os.Getenv("PATH")
+	path := cmd.GetPath().BinPath() + ":" + os.Getenv("PATH")
 	return []string{"PATH=" + path}
 }
 

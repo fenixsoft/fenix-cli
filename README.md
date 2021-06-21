@@ -1,4 +1,4 @@
-# Fenix-CLI：Interactive Cloud-Native Environments Client
+# Fenix-CLI：Interactive Cloud-Native Environment Client
 
 <a href="https://travis-ci.com/fenixsoft/fenix-cli" target="_blank" style="display:inline-block" class="not-print"><img src="https://api.travis-ci.com/fenixsoft/fenix-cli.svg?branch=main" alt="Travis-CI"></a>
 <a href="https://icyfenix.cn/introduction/about-me.html" target="_blank" style="display:inline-block"><img src="https://raw.githubusercontent.com/fenixsoft/awesome-fenix/master/.vuepress/public/images/Author-IcyFenix-blue.svg" alt="About Author"></a> 
