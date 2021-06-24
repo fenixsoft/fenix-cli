@@ -22,8 +22,8 @@ func RegisterEnv() (*environments.Runtime, error) {
 	}
 
 	DockerRuntime = &environments.Runtime{
-		Prefix:         "docker",
-		Completer:      completer,
+		Prefix: "docker",
+		//Completer:      completer,
 		Commands:       ExtraCommands,
 		MainSuggestion: MajorCommands,
 		Executor: environments.GetDefaultExecutor("docker", func() {

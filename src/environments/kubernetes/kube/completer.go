@@ -92,11 +92,33 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	}
 	commandArgs, skipNext := excludeOptions(args)
 	if skipNext {
-		// when type 'get pod -o ', we don't want to complete pods. we want to type 'json' or other.
-		// So we need to skip argumentCompleter.
-		return []prompt.Suggest{}
+		return optionValueCompleter(args, w)
 	}
 	return c.argumentsCompleter(namespace, commandArgs)
+}
+
+func optionValueCompleter(args []string, currentArg string) []prompt.Suggest {
+	l := len(args)
+	var suggest []prompt.Suggest
+	if l < 2 {
+		return suggest
+	}
+	option := args[l-2]
+
+	switch option {
+	case "--context":
+		suggest = GetContextSuggestions()
+	case "--output", "-o":
+		suggest = []prompt.Suggest{{Text: "json"}, {Text: "yaml"}, {Text: "table"}, {Text: "short"}}
+	case "--cascade":
+		suggest = []prompt.Suggest{{Text: "background"}, {Text: "orphan"}, {Text: "foreground"}}
+	case "--restart":
+		suggest = []prompt.Suggest{{Text: "Always"}, {Text: "OnFailure"}, {Text: "Never"}}
+	case "--session-affinity":
+		suggest = []prompt.Suggest{{Text: "None"}, {Text: "ClientIP"}}
+	}
+
+	return prompt.FilterContains(suggest, currentArg, true)
 }
 
 func checkNamespaceArg(d prompt.Document) string {
@@ -227,7 +249,7 @@ func excludeOptions(args []string) ([]string, bool) {
 	filtered := make([]string, 0, l)
 
 	var skipNextArg bool
-	for i := 0; i < len(args); i++ {
+	for i := 0; i < len(args)-1; i++ {
 		if skipNextArg {
 			skipNextArg = false
 			continue
@@ -243,15 +265,17 @@ func excludeOptions(args []string) ([]string, bool) {
 		}
 
 		for _, s := range []string{
-			"-f", "--filename",
-			"-n", "--namespace",
-			"-s", "--server",
-			"--kubeconfig",
-			"--cluster",
-			"--user",
-			"-o", "--output",
-			"-c",
-			"--container",
+			"-f", "--filename", "-n", "--namespace", "-s", "--server", "--kubeconfig", "--cluster", "--user",
+			"-o", "--output", "-c", "--container", "--clusterrole", "--role", "--clusterip", "--external-name",
+			"--tcp", "--template", "--field-manager", "--chunk-size", "--field-selector", "--selector", "--sort-by",
+			"--serviceaccount", "--aggregation-rule", "--rule", "--verb", "--from-file", "--from-literal", "--from",
+			"--image", "--port", "--replicas", "--annotation", "--max-unavailable", "--min-available", "--description",
+			"--preemption-policy", "--resource-name", "--resource", "--docker-server", "--docker-password",
+			"--external-name", "--allow-missing-template-keys", "--chunk-size", "--label-columns", "--kustomize",
+			"--raw", "--sort-by", "--cascade", "--envc", "--grace-period", "--hostport", "--image-pull-policy",
+			"--limits", "--overrides", "--pod-running-timeout", "--requests", "--restart", "--timeout",
+			"--container-port", "--target-port", "--external-ip", "--generator", "--protocol", "--session-affinity",
+			"--type", "--resource-version", "--cpu-percent", "--max", "--min", "--copy-to",
 		} {
 			if strings.HasPrefix(args[i], s) {
 				if strings.Contains(args[i], "=") {
@@ -269,6 +293,7 @@ func excludeOptions(args []string) ([]string, bool) {
 
 		filtered = append(filtered, args[i])
 	}
+	filtered = append(filtered, args[len(args)-1])
 
 	return filtered, skipNextArg
 }

@@ -8,26 +8,22 @@ import (
 	"github.com/pkg/errors"
 )
 
-var Completer *IstioCompleter
-
 // MUST register AFTER Kubernetes environment
 func RegisterEnv() (*environments.Runtime, error) {
-	if c, err := NewCompleter(); err != nil {
+	if c, err := New(); err != nil {
 		return nil, err
 	} else if !krew.IsIstiocltAvailable() {
 		return nil, errors.New("istio is not available")
 	} else {
-		Completer = c
-
-		c.IstioRuntime = &environments.Runtime{
+		c.Runtime = &environments.Runtime{
 			Prefix:         "istioctl",
-			Completer:      c.Complete,
+			Completer:      c.GenericCompleter,
 			Executor:       environments.GetDefaultExecutor("istioctl", nil),
-			MainSuggestion: MajorCommands,
+			MainSuggestion: options,
 			LivePrefix: func() (prefix string, useLivePrefix bool) {
 				return fmt.Sprintf("%v > istioctl ", kubernetes.Completer.Namespace), true
 			},
 		}
-		return c.IstioRuntime, nil
+		return c.Runtime, nil
 	}
 }

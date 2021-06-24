@@ -8,6 +8,7 @@ import (
 	prompt "github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/lib/go-ansi"
 	"github.com/fenixsoft/fenix-cli/src/internal/template"
+	"github.com/fenixsoft/fenix-cli/src/suggestions"
 	"github.com/schollz/progressbar/v3"
 	"os"
 	"time"
@@ -15,9 +16,9 @@ import (
 
 type Runtime struct {
 	Prefix         string
-	Completer      prompt.Completer
+	Completer      *suggestions.GenericCompleter
 	Executor       prompt.Executor
-	ExitChecker    prompt.ExitChecker
+	Setup          func()
 	LivePrefix     func() (prefix string, useLivePrefix bool)
 	Commands       []Command
 	MainSuggestion []prompt.Suggest
@@ -113,8 +114,20 @@ func Initialize() {
 		}
 		for _, e := range envs {
 			if env, ok := Environments[e]; ok {
-				env.MainSuggestion = append(env.MainSuggestion, prompt.Suggest{Text: v.Text, Description: v.Description})
+				c := env.Completer
+				if c != nil {
+					c.Arguments = append(c.Arguments, prompt.Suggest{Text: v.Text, Alias: v.Alias, Provider: v.Provider, Description: v.Description})
+					c.Arguments = append(c.Arguments, v.ExtendArguments...)
+					c.Options = append(c.Options, v.ExtendOptions...)
+				}
 			}
+		}
+	}
+
+	for k := range Environments {
+		c := Environments[k].Completer
+		if c != nil {
+			c.Setup(c)
 		}
 	}
 }
@@ -139,7 +152,7 @@ func defaultLivePrefix() (prefix string, useLivePrefix bool) {
 // Return active completer
 func GetActiveCompleter() prompt.Completer {
 	return func(document prompt.Document) []prompt.Suggest {
-		return GetActive().Completer(document)
+		return GetActive().Completer.Complete(document)
 	}
 }
 

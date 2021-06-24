@@ -50,34 +50,43 @@ var ExtraCommands = []environments.Command{
 	},
 	{
 		Text:         "x-namespace",
+		Alias:        "x-ns",
+		Provider:     Namespace,
 		Description:  "Select the namespace for kubernetes management",
 		Environments: []environments.Environment{environments.Kubernetes, environments.Istio},
-		MatchFn:      environments.IgnoreCaseMatch,
+		MatchFn:      environments.StartWithMatch,
 		Fn: func(args []string, writer io.Writer) {
-			// refresh for new namespace
-			kube.GetNameSpaceSuggestions(Completer)
-
-			ns := make([]string, len(Completer.NamespaceList.Items))
-			for i := range Completer.NamespaceList.Items {
-				ns[i] = Completer.NamespaceList.Items[i].Name
-			}
-
 			var ret string
-			pt := &survey.Select{
-				Message: "Select active namespace: ",
-				Options: ns,
-			}
-			if err := survey.AskOne(pt, &ret); err != nil {
-				_, _ = writer.Write([]byte(err.Error() + "\n"))
+			if len(args) < 2 {
+				// refresh for new namespace
+				kube.GetNameSpaceSuggestions(Completer)
+
+				ns := make([]string, len(Completer.NamespaceList.Items))
+				for i := range Completer.NamespaceList.Items {
+					ns[i] = Completer.NamespaceList.Items[i].Name
+				}
+
+				pt := &survey.Select{
+					Message: "Select active namespace: ",
+					Options: ns,
+				}
+				if err := survey.AskOne(pt, &ret); err != nil {
+					_, _ = writer.Write([]byte(err.Error() + "\n"))
+					return
+				}
 			} else {
-				// execute : kubectl config set-context --current --namespace=<NS>
-				executor("config set-context --current --namespace=" + ret)
-				Completer.Namespace = ret
+				ret = args[1]
 			}
+
+			// execute : kubectl config set-context --current --namespace=<NS>
+			executor("config set-context --current --namespace=" + ret)
+			Completer.Namespace = ret
+
 		},
 	},
 	{
 		Text:         "x-batch",
+		Provider:     Resource,
 		Description:  "Batch management of kubernetes resources",
 		Environments: []environments.Environment{environments.Kubernetes},
 		MatchFn:      environments.StartWithMatch,
@@ -255,6 +264,7 @@ var ExtraCommands = []environments.Command{
 	},
 	{
 		Text:         "x-sniff",
+		Provider:     Pod,
 		Description:  "Get a capture of the network activity between services.",
 		Environments: []environments.Environment{environments.Kubernetes},
 		MatchFn:      environments.StartWithMatch,
@@ -288,6 +298,7 @@ var ExtraCommands = []environments.Command{
 	},
 	{
 		Text:         "x-lens",
+		Provider:     Pod,
 		Description:  "Show pod-related resource information.",
 		Environments: []environments.Environment{environments.Kubernetes},
 		MatchFn:      environments.StartWithMatch,
@@ -317,6 +328,7 @@ var ExtraCommands = []environments.Command{
 	},
 	{
 		Text:         "x-open",
+		Provider:     Service,
 		Description:  "Open the kubernetes url for the specified service in your browser.",
 		Environments: []environments.Environment{environments.Kubernetes},
 		MatchFn:      environments.StartWithMatch,

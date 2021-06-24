@@ -15,12 +15,16 @@ import (
 )
 
 type Command struct {
-	Text         string
-	HokKey       prompt.Key
-	Environments []Environment
-	Description  string
-	MatchFn      func(string, string) bool
-	Fn           func([]string, io.Writer)
+	Text            string
+	HokKey          prompt.Key
+	Environments    []Environment
+	Provider        string
+	Description     string
+	Alias           string
+	MatchFn         func(string, string) bool
+	Fn              func([]string, io.Writer)
+	ExtendArguments []prompt.Suggest
+	ExtendOptions   []prompt.Suggest
 }
 
 func checkEnvironments(envs []Environment) bool {
@@ -70,10 +74,6 @@ func IgnoreCaseMatch(text string, cmd string) bool {
 
 func StartWithMatch(text string, cmd string) bool {
 	return strings.HasPrefix(cmd, text)
-}
-
-func AllMatch(text string, cmd string) bool {
-	return true
 }
 
 func getKeyName(k prompt.Key) string {

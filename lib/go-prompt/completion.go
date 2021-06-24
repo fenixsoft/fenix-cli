@@ -23,7 +23,9 @@ var (
 
 // Suggest is printed when completing.
 type Suggest struct {
+	Argument    string
 	Text        string
+	Provider    string
 	Alias       string
 	Description string
 }

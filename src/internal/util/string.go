@@ -1,6 +1,6 @@
 package util
 
-import "os"
+import "strings"
 
 func SubString(source string, start int, end int) string {
 	var r = []rune(source)
@@ -15,10 +15,6 @@ func SubString(source string, start int, end int) string {
 	return string(r[start:end]) + "..."
 }
 
-func AddOSEnviron(envs map[string]string) []string {
-	osEnvs := os.Environ()
-	for k := range envs {
-		osEnvs = append(osEnvs, k+"="+envs[k])
-	}
-	return osEnvs
+func HasPrefixIgnoreCase(s string, prefix string) bool {
+	return strings.HasPrefix(strings.ToLower(s), strings.ToLower(prefix))
 }
