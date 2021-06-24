@@ -7,7 +7,7 @@ import (
 	"github.com/fenixsoft/fenix-cli/src/suggestions"
 )
 
-func New() (*environments.RuntimeCompleter, error) {
+func New() (*suggestions.GenericCompleter, error) {
 	// only support Istio over Kubernetes
 	// so that must already installed Kubernetes Env
 	if _, err := kube.NewCompleter(); err != nil {
@@ -19,12 +19,10 @@ func New() (*environments.RuntimeCompleter, error) {
 		return nil, errors.New(msg)
 	}
 
-	completer := &environments.RuntimeCompleter{
-		GenericCompleter: suggestions.NewGenericCompleter(arguments, options, func(c *suggestions.GenericCompleter) {
-			c.SuggestionProviders.Add(suggestions.Argument, suggestions.BuildStaticProvider(c.Arguments, suggestions.LengthFilter))
-			c.SuggestionProviders.Add(suggestions.Option, suggestions.BuildStaticProvider(c.Options, suggestions.BestEffortFilter))
-		}),
-	}
+	completer := suggestions.NewGenericCompleter(arguments, options, func(c *suggestions.GenericCompleter) {
+		c.SuggestionProviders.Add(suggestions.Argument, suggestions.BuildStaticCompletionProvider(c.Arguments, suggestions.LengthFilter))
+		c.SuggestionProviders.Add(suggestions.Option, suggestions.BuildStaticCompletionProvider(c.Options, suggestions.BestEffortFilter))
+	})
 
 	return completer, nil
 }

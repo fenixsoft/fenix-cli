@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/terminal"
-	"github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
+	"github.com/fenixsoft/fenix-cli/src/suggestions"
 	"io"
 	"strings"
 )
@@ -14,6 +14,7 @@ import (
 var ExtraCommands = []environments.Command{
 	{
 		Text:         "x-batch",
+		Provider:     DockerType,
 		Description:  "Batch management of containers and images",
 		Environments: []environments.Environment{environments.Docker},
 		MatchFn:      environments.StartWithMatch,
@@ -26,15 +27,15 @@ var ExtraCommands = []environments.Command{
 			}
 
 			resources := map[string]struct {
-				fn  func() []prompt.Suggest
+				fn  suggestions.Provider
 				ops []string
 			}{
 				"container": {
-					fn:  containerSuggestion,
+					fn:  provideContainerSuggestion,
 					ops: []string{"rm", "rm -f", "start", "stop", "restart", "pause", "unpause", "kill"},
 				},
 				"image": {
-					fn:  imagesSuggestion,
+					fn:  provideImagesSuggestion,
 					ops: []string{"rmi", "rmi -f", "create", "run"},
 				},
 			}

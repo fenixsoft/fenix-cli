@@ -44,6 +44,8 @@ var sharedProviders map[string]Provider
 func init() {
 	sharedProviders = make(map[string]Provider)
 	RegisterSharedProvider(Path, providePathSuggestion)
+	RegisterSharedProvider(Output, BuildFixedSelectionProvider("yaml", "json", "table", "short"))
+	RegisterSharedProvider(Loglevel, BuildFixedSelectionProvider("trace", "debug", "info", "warn", "error", "fatal"))
 }
 
 func RegisterSharedProvider(id string, provider Provider) {

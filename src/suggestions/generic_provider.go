@@ -7,7 +7,9 @@ import (
 )
 
 const (
-	Path = "path"
+	Path     = "path"
+	Output   = "output"
+	Loglevel = "Loglevel"
 )
 
 // The providePathSuggestion provide filesystem completion

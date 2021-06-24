@@ -15,15 +15,14 @@ func RegisterEnv() (*environments.Runtime, error) {
 	} else if !krew.IsIstiocltAvailable() {
 		return nil, errors.New("istio is not available")
 	} else {
-		c.Runtime = &environments.Runtime{
+		return &environments.Runtime{
 			Prefix:         "istioctl",
-			Completer:      c.GenericCompleter,
+			Completer:      c,
 			Executor:       environments.GetDefaultExecutor("istioctl", nil),
 			MainSuggestion: options,
 			LivePrefix: func() (prefix string, useLivePrefix bool) {
 				return fmt.Sprintf("%v > istioctl ", kubernetes.Completer.Namespace), true
 			},
-		}
-		return c.Runtime, nil
+		}, nil
 	}
 }

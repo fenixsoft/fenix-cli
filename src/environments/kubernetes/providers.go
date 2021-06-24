@@ -28,7 +28,8 @@ const (
 	ReplicationController = "replicationcontroller"
 	ResourceQuota         = "resourcequota"
 	Service               = "service"
-	Resource              = "Resource"
+
+	Resource = "Resource"
 )
 
 func providePodSuggestion(arg ...string) []prompt.Suggest {

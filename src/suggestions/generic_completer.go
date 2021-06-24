@@ -109,7 +109,7 @@ func (g GenericCompleter) excludeOptions(args []string) ([]string, bool, string)
 			}
 			// adjust for switch arg (provider is bool)
 			for _, s := range optionSet {
-				if strings.EqualFold(s.Text, args[i]) {
+				if strings.EqualFold(s.Text, args[i]) || strings.EqualFold(s.Alias, args[i]) {
 					optionValueProvider = s.Provider
 					optionValueFlag = s.Provider != "bool"
 				}

@@ -6,8 +6,19 @@ import (
 	"strings"
 )
 
+// Build fixed selection (eg: json|yaml|xml) Provider
+func BuildFixedSelectionProvider(selections ...string) Provider {
+	var ret []prompt.Suggest
+	for _, v := range selections {
+		ret = append(ret, prompt.Suggest{Text: v})
+	}
+	return func(args ...string) []prompt.Suggest {
+		return ret
+	}
+}
+
 // Build static completion (Arguments \ Options) Provider
-func BuildStaticProvider(options []prompt.Suggest, fn SuggestionFilter) Provider {
+func BuildStaticCompletionProvider(options []prompt.Suggest, fn SuggestionFilter) Provider {
 	// setup index
 	suggestions := make(map[string][]prompt.Suggest)
 	for _, v := range options {
