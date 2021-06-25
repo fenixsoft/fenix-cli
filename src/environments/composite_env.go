@@ -15,13 +15,12 @@ import (
 )
 
 type Runtime struct {
-	Prefix         string
-	Completer      *suggestions.GenericCompleter
-	Executor       prompt.Executor
-	Setup          func()
-	LivePrefix     func() (prefix string, useLivePrefix bool)
-	Commands       []Command
-	MainSuggestion []prompt.Suggest
+	Prefix     string
+	Completer  *suggestions.GenericCompleter
+	Executor   prompt.Executor
+	Setup      func()
+	LivePrefix func() (prefix string, useLivePrefix bool)
+	Commands   []Command
 }
 
 type Register func() (*Runtime, error)

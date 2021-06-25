@@ -3,14 +3,14 @@ package istio
 import (
 	"errors"
 	"github.com/fenixsoft/fenix-cli/src/environments"
-	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes/kube"
+	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes"
 	"github.com/fenixsoft/fenix-cli/src/suggestions"
 )
 
 func New() (*suggestions.GenericCompleter, error) {
 	// only support Istio over Kubernetes
 	// so that must already installed Kubernetes Env
-	if _, err := kube.NewCompleter(); err != nil {
+	if _, err := kubernetes.NewClient(); err != nil {
 		return nil, err
 	}
 	// check if istioctl is valid in PATH

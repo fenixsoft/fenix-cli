@@ -1,8 +1,9 @@
-package kube
+package kubernetes
 
 import (
 	"context"
 	"fmt"
+	"github.com/fenixsoft/fenix-cli/src/environments"
 	"sort"
 	"strings"
 	"sync"
@@ -138,7 +139,7 @@ func fetchContextList() {
 		return
 	}
 	updateLastFetchedAt(key)
-	r := ExecuteAndGetResult("config get-contexts --no-headers -o name")
+	_, r := environments.ExecuteAndGetResult("kubectl", "config get-contexts --no-headers -o name")
 	r = strings.TrimRight(r, "\n")
 	contextList.Store(strings.Split(r, "\n"))
 }
@@ -587,12 +588,12 @@ func GetLimitRangeSuggestions(client *kubernetes.Clientset, namespace string) []
 
 /* NameSpaces */
 
-func GetNameSpaceSuggestions(completer *Completer) []prompt.Suggest {
+func GetNameSpaceSuggestions(client *KubeClient) []prompt.Suggest {
 	// refresh namespace everytime
-	c, _ := NewCompleter()
-	completer.Namespace = c.Namespace
-	completer.NamespaceList = c.NamespaceList
-	namespaceList := completer.NamespaceList
+	c, _ := NewClient()
+	client.Namespace = c.Namespace
+	client.NamespaceList = c.NamespaceList
+	namespaceList := client.NamespaceList
 
 	if namespaceList == nil || len(namespaceList.Items) == 0 {
 		return []prompt.Suggest{}

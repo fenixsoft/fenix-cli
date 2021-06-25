@@ -16,12 +16,11 @@ func RegisterEnv() (*environments.Runtime, error) {
 		return nil, errors.New("istio is not available")
 	} else {
 		return &environments.Runtime{
-			Prefix:         "istioctl",
-			Completer:      c,
-			Executor:       environments.GetDefaultExecutor("istioctl", nil),
-			MainSuggestion: options,
+			Prefix:    "istioctl",
+			Completer: c,
+			Executor:  environments.GetDefaultExecutor("istioctl", nil),
 			LivePrefix: func() (prefix string, useLivePrefix bool) {
-				return fmt.Sprintf("%v > istioctl ", kubernetes.Completer.Namespace), true
+				return fmt.Sprintf("%v > istioctl ", kubernetes.Client.Namespace), true
 			},
 		}, nil
 	}

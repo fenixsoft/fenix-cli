@@ -33,7 +33,7 @@ func main() {
 		prompt.OptionAddKeyBind(environments.BuildPromptKeyBinds()...),
 		// register live prefix that will be change automatically when env changed
 		prompt.OptionLivePrefix(environments.LivePrefix),
-		prompt.OptionTitle("Fenix-CLI: Interactive Cloud-Native Environment Client"),
+		prompt.OptionTitle("Fenix-CLI: Interactive Cloud-Native Environment KubeClient"),
 		prompt.OptionInputTextColor(prompt.Yellow),
 		prompt.OptionCompletionOnDown(),
 		prompt.OptionMaxSuggestion(8),

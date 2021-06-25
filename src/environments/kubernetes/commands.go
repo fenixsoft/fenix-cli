@@ -6,7 +6,6 @@ import (
 	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/c-bata/go-prompt"
 	"github.com/fenixsoft/fenix-cli/src/environments"
-	"github.com/fenixsoft/fenix-cli/src/environments/kubernetes/kube"
 	"github.com/fenixsoft/fenix-cli/src/internal/krew"
 	"github.com/fenixsoft/fenix-cli/src/internal/util"
 	"io"
@@ -15,7 +14,7 @@ import (
 )
 
 var executor = func(args string) {
-	Completer.KubernetesRuntime.Executor(args)
+	environments.GetKubernetes().Executor(args)
 }
 
 var ExtraCommands = []environments.Command{
@@ -26,12 +25,10 @@ var ExtraCommands = []environments.Command{
 		MatchFn:      environments.IgnoreCaseMatch,
 		Fn: func(args []string, writer io.Writer) {
 			// refresh for new namespace
-			if c, err := kube.NewCompleter(); err != nil {
-				Completer = c
-			}
+			GetNameSpaceSuggestions(Client)
 
 			var ctx []string
-			sug := kube.GetContextSuggestions()
+			sug := GetContextSuggestions()
 			for _, s := range sug {
 				ctx = append(ctx, s.Text)
 			}
@@ -59,11 +56,11 @@ var ExtraCommands = []environments.Command{
 			var ret string
 			if len(args) < 2 {
 				// refresh for new namespace
-				kube.GetNameSpaceSuggestions(Completer)
+				GetNameSpaceSuggestions(Client)
 
-				ns := make([]string, len(Completer.NamespaceList.Items))
-				for i := range Completer.NamespaceList.Items {
-					ns[i] = Completer.NamespaceList.Items[i].Name
+				ns := make([]string, len(Client.NamespaceList.Items))
+				for i := range Client.NamespaceList.Items {
+					ns[i] = Client.NamespaceList.Items[i].Name
 				}
 
 				pt := &survey.Select{
@@ -80,7 +77,7 @@ var ExtraCommands = []environments.Command{
 
 			// execute : kubectl config set-context --current --namespace=<NS>
 			executor("config set-context --current --namespace=" + ret)
-			Completer.Namespace = ret
+			Client.Namespace = ret
 
 		},
 	},
@@ -98,95 +95,95 @@ var ExtraCommands = []environments.Command{
 			}{
 				"componentstatuses": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetComponentStatusCompletions(c)
+						return GetComponentStatusCompletions(c)
 					},
 					ops: defaultOp,
 				},
 				"cc": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetComponentStatusCompletions(c)
+						return GetComponentStatusCompletions(c)
 					},
 					ops: defaultOp,
 				},
 				"namespaces": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetNameSpaceSuggestions(Completer)
+						return GetNameSpaceSuggestions(Client)
 					},
 					ops: defaultOp,
 				},
 				"ns": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetNameSpaceSuggestions(Completer)
+						return GetNameSpaceSuggestions(Client)
 					},
 					ops: defaultOp,
 				},
 				"nodes": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetNodeSuggestions(c)
+						return GetNodeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"no": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetNodeSuggestions(c)
+						return GetNodeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"persistentvolumes": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetPersistentVolumeSuggestions(c)
+						return GetPersistentVolumeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"pv": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetPersistentVolumeSuggestions(c)
+						return GetPersistentVolumeSuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"podsecuritypolicies": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetPodSecurityPolicySuggestions(c)
+						return GetPodSecurityPolicySuggestions(c)
 					},
 					ops: defaultOp,
 				},
 				"psp": {
 					fn: func(c *k8s.Clientset, s string) []prompt.Suggest {
-						return kube.GetPodSecurityPolicySuggestions(c)
+						return GetPodSecurityPolicySuggestions(c)
 					},
 					ops: defaultOp,
 				},
-				"configmaps":             {fn: kube.GetConfigMapSuggestions, ops: defaultOp},
-				"cm":                     {fn: kube.GetConfigMapSuggestions, ops: defaultOp},
-				"daemonsets":             {fn: kube.GetDaemonSetSuggestions, ops: defaultOp},
-				"ds":                     {fn: kube.GetDaemonSetSuggestions, ops: defaultOp},
-				"deployments":            {fn: kube.GetDeploymentSuggestions, ops: defaultOp},
-				"deploy":                 {fn: kube.GetDeploymentSuggestions, ops: defaultOp},
-				"endpoints":              {fn: kube.GetEndpointsSuggestions, ops: defaultOp},
-				"ep":                     {fn: kube.GetEndpointsSuggestions, ops: defaultOp},
-				"ingresses":              {fn: kube.GetIngressSuggestions, ops: defaultOp},
-				"ing":                    {fn: kube.GetIngressSuggestions, ops: defaultOp},
-				"limitranges":            {fn: kube.GetLimitRangeSuggestions, ops: defaultOp},
-				"limits":                 {fn: kube.GetLimitRangeSuggestions, ops: defaultOp},
-				"pods":                   {fn: kube.GetPodSuggestions, ops: defaultOp},
-				"po":                     {fn: kube.GetPodSuggestions, ops: defaultOp},
-				"pod":                    {fn: kube.GetPodSuggestions, ops: defaultOp},
-				"persistentvolumeclaims": {fn: kube.GetPersistentVolumeClaimSuggestions, ops: defaultOp},
-				"pvc":                    {fn: kube.GetPersistentVolumeClaimSuggestions, ops: defaultOp},
-				"podtemplates":           {fn: kube.GetPodTemplateSuggestions, ops: defaultOp},
-				"replicasets":            {fn: kube.GetReplicaSetSuggestions, ops: defaultOp},
-				"rs":                     {fn: kube.GetReplicaSetSuggestions, ops: defaultOp},
-				"replicationcontrollers": {fn: kube.GetReplicationControllerSuggestions, ops: defaultOp},
-				"rc":                     {fn: kube.GetReplicationControllerSuggestions, ops: defaultOp},
-				"resourcequotas":         {fn: kube.GetResourceQuotasSuggestions, ops: defaultOp},
-				"quota":                  {fn: kube.GetResourceQuotasSuggestions, ops: defaultOp},
-				"secrets":                {fn: kube.GetSecretSuggestions, ops: defaultOp},
-				"serviceaccounts":        {fn: kube.GetServiceAccountSuggestions, ops: defaultOp},
-				"sa":                     {fn: kube.GetServiceAccountSuggestions, ops: defaultOp},
-				"services":               {fn: kube.GetServiceSuggestions, ops: defaultOp},
-				"svc":                    {fn: kube.GetServiceSuggestions, ops: defaultOp},
-				"jobs":                   {fn: kube.GetJobSuggestions, ops: defaultOp},
-				"job":                    {fn: kube.GetJobSuggestions, ops: defaultOp},
+				"configmaps":             {fn: GetConfigMapSuggestions, ops: defaultOp},
+				"cm":                     {fn: GetConfigMapSuggestions, ops: defaultOp},
+				"daemonsets":             {fn: GetDaemonSetSuggestions, ops: defaultOp},
+				"ds":                     {fn: GetDaemonSetSuggestions, ops: defaultOp},
+				"deployments":            {fn: GetDeploymentSuggestions, ops: defaultOp},
+				"deploy":                 {fn: GetDeploymentSuggestions, ops: defaultOp},
+				"endpoints":              {fn: GetEndpointsSuggestions, ops: defaultOp},
+				"ep":                     {fn: GetEndpointsSuggestions, ops: defaultOp},
+				"ingresses":              {fn: GetIngressSuggestions, ops: defaultOp},
+				"ing":                    {fn: GetIngressSuggestions, ops: defaultOp},
+				"limitranges":            {fn: GetLimitRangeSuggestions, ops: defaultOp},
+				"limits":                 {fn: GetLimitRangeSuggestions, ops: defaultOp},
+				"pods":                   {fn: GetPodSuggestions, ops: defaultOp},
+				"po":                     {fn: GetPodSuggestions, ops: defaultOp},
+				"pod":                    {fn: GetPodSuggestions, ops: defaultOp},
+				"persistentvolumeclaims": {fn: GetPersistentVolumeClaimSuggestions, ops: defaultOp},
+				"pvc":                    {fn: GetPersistentVolumeClaimSuggestions, ops: defaultOp},
+				"podtemplates":           {fn: GetPodTemplateSuggestions, ops: defaultOp},
+				"replicasets":            {fn: GetReplicaSetSuggestions, ops: defaultOp},
+				"rs":                     {fn: GetReplicaSetSuggestions, ops: defaultOp},
+				"replicationcontrollers": {fn: GetReplicationControllerSuggestions, ops: defaultOp},
+				"rc":                     {fn: GetReplicationControllerSuggestions, ops: defaultOp},
+				"resourcequotas":         {fn: GetResourceQuotasSuggestions, ops: defaultOp},
+				"quota":                  {fn: GetResourceQuotasSuggestions, ops: defaultOp},
+				"secrets":                {fn: GetSecretSuggestions, ops: defaultOp},
+				"serviceaccounts":        {fn: GetServiceAccountSuggestions, ops: defaultOp},
+				"sa":                     {fn: GetServiceAccountSuggestions, ops: defaultOp},
+				"services":               {fn: GetServiceSuggestions, ops: defaultOp},
+				"svc":                    {fn: GetServiceSuggestions, ops: defaultOp},
+				"jobs":                   {fn: GetJobSuggestions, ops: defaultOp},
+				"job":                    {fn: GetJobSuggestions, ops: defaultOp},
 			}
 
 			if len(args) < 2 {
@@ -204,7 +201,7 @@ var ExtraCommands = []environments.Command{
 			resource := resources[resType]
 			var opts []string
 			col := int(util.GetWindowWidth() - 15)
-			for _, v := range resource.fn(Completer.Client, Completer.Namespace) {
+			for _, v := range resource.fn(Client.Set, Client.Namespace) {
 				opts = append(opts, v.Text+" | "+util.SubString(v.Description, 0, col-len(v.Text)))
 			}
 			var qs = []*survey.Question{
