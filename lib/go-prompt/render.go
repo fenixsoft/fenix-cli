@@ -2,6 +2,7 @@ package prompt
 
 import (
 	"runtime"
+	"strings"
 
 	"github.com/c-bata/go-prompt/internal/debug"
 	runewidth "github.com/mattn/go-runewidth"
@@ -211,9 +212,10 @@ func (r *Render) Render(buffer *Buffer, completion *CompletionManager) {
 		cursor = r.backward(cursor, runewidth.StringWidth(buffer.Document().GetWordBeforeCursorUntilSeparator(completion.wordSeparator)))
 
 		r.out.SetColor(r.previewSuggestionTextColor, r.previewSuggestionBGColor, false)
-		r.out.WriteStr(suggest.Text)
+		t := strings.Trim(suggest.Text, " ")
+		r.out.WriteStr(t)
 		r.out.SetColor(DefaultColor, DefaultColor, false)
-		cursor += runewidth.StringWidth(suggest.Text)
+		cursor += runewidth.StringWidth(t)
 
 		rest := buffer.Document().TextAfterCursor()
 		r.out.WriteStr(rest)

@@ -3,6 +3,7 @@ package prompt
 import (
 	"bytes"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/c-bata/go-prompt/internal/debug"
@@ -203,7 +204,7 @@ func (p *Prompt) handleCompletionKeyBinding(key Key, completing bool) bool {
 					if w != "" {
 						p.buf.DeleteBeforeCursor(len([]rune(w)))
 					}
-					p.buf.InsertText(s.Text, false, true)
+					p.buf.InsertText(strings.Trim(s.Text, " "), false, true)
 					continues = false
 				}
 				p.completion.selected = -1
@@ -219,7 +220,7 @@ func (p *Prompt) handleCompletionKeyBinding(key Key, completing bool) bool {
 					if w != "" {
 						p.buf.DeleteBeforeCursor(len([]rune(w)))
 					}
-					p.buf.InsertText(s.Text, false, true)
+					p.buf.InsertText(strings.Trim(s.Text, " "), false, true)
 					continues = false
 				}
 			}
@@ -230,7 +231,7 @@ func (p *Prompt) handleCompletionKeyBinding(key Key, completing bool) bool {
 			if w != "" {
 				p.buf.DeleteBeforeCursor(len([]rune(w)))
 			}
-			p.buf.InsertText(s.Text, false, true)
+			p.buf.InsertText(strings.Trim(s.Text, " "), false, true)
 		}
 		p.completion.Reset()
 	}
