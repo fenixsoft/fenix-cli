@@ -11,6 +11,7 @@ import (
 	"github.com/fenixsoft/fenix-cli/src/suggestions"
 	"github.com/schollz/progressbar/v3"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -58,6 +59,7 @@ func SelectCurrentEnvironment() {
 		for k, _ := range Environments {
 			options = append(options, string(k))
 		}
+		sort.Strings(options)
 		var pt = &survey.Select{
 			Message: "Multiple environments are detected. You want to operate",
 			Options: options,

@@ -121,7 +121,8 @@ func GetConfigMapSuggestions(client *kubernetes.Clientset, namespace string) []p
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        l.Items[i].Name,
+			Description: fmt.Sprintf("Data: %v", len(l.Items[i].Data)),
 		}
 	}
 	return s
@@ -357,8 +358,10 @@ func GetDeploymentSuggestions(client *kubernetes.Clientset, namespace string) []
 	}
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
+		v := l.Items[i]
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        v.Name,
+			Description: fmt.Sprintf("%v / %v (Ready / Replicas), %v Strategy", v.Status.ReadyReplicas, v.Status.Replicas, v.Spec.Strategy.Type),
 		}
 	}
 	return s
@@ -378,7 +381,7 @@ func fetchEndpoints(client *kubernetes.Clientset, namespace string) {
 	updateLastFetchedAt(key)
 
 	l, _ := client.CoreV1().Endpoints(namespace).List(context.Background(), metav1.ListOptions{})
-	endpointList.Store(key, l)
+	endpointList.Store(namespace, l)
 	return
 }
 
@@ -394,8 +397,13 @@ func GetEndpointsSuggestions(client *kubernetes.Clientset, namespace string) []p
 	}
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
+		var desc string
+		if len(l.Items[i].Subsets) > 0 && len(l.Items[i].Subsets[0].Addresses) > 0 {
+			desc = fmt.Sprintf("%v:%v", l.Items[i].Subsets[0].Addresses[0].IP, l.Items[i].Subsets[0].Ports[0].Port)
+		}
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        l.Items[i].Name,
+			Description: desc,
 		}
 	}
 	return s
@@ -465,7 +473,8 @@ func GetNodeSuggestions(client *kubernetes.Clientset) []prompt.Suggest {
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        l.Items[i].Name,
+			Description: fmt.Sprintf("%v / Kubernetes %v / %v", l.Items[i].Status.NodeInfo.OSImage, l.Items[i].Status.NodeInfo.KubeletVersion, l.Items[i].Spec.PodCIDRs),
 		}
 	}
 	return s
@@ -502,7 +511,8 @@ func GetSecretSuggestions(client *kubernetes.Clientset, namespace string) []prom
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        l.Items[i].Name,
+			Description: string(l.Items[i].Type),
 		}
 	}
 	return s
@@ -760,7 +770,7 @@ func fetchReplicaSetList(client *kubernetes.Clientset, namespace string) {
 	}
 	updateLastFetchedAt(key)
 
-	l, _ := client.AppsV1beta2().ReplicaSets(namespace).List(context.Background(), metav1.ListOptions{})
+	l, _ := client.AppsV1().ReplicaSets(namespace).List(context.Background(), metav1.ListOptions{})
 	replicaSetList.Store(namespace, l)
 	return
 }
@@ -771,14 +781,15 @@ func GetReplicaSetSuggestions(client *kubernetes.Clientset, namespace string) []
 	if !ok {
 		return []prompt.Suggest{}
 	}
-	l, ok := x.(appsv1.ReplicaSetList)
+	l, ok := x.(*appsv1.ReplicaSetList)
 	if !ok || len(l.Items) == 0 {
 		return []prompt.Suggest{}
 	}
 	s := make([]prompt.Suggest, len(l.Items))
 	for i := range l.Items {
 		s[i] = prompt.Suggest{
-			Text: l.Items[i].Name,
+			Text:        l.Items[i].Name,
+			Description: fmt.Sprintf("%v/%v/%v (Desired/Current/Ready)", l.Items[i].Status.Replicas, l.Items[i].Status.AvailableReplicas, l.Items[i].Status.ReadyReplicas),
 		}
 	}
 	return s

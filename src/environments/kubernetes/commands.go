@@ -310,6 +310,7 @@ var ExtraCommands = []environments.Command{
 	},
 	{
 		Text:         "x-status",
+		Provider:     Resource,
 		Description:  "Print a human-friendly output that focuses on the status fields of the resources in kubernetes.",
 		Environments: []environments.Environment{environments.Kubernetes},
 		MatchFn:      environments.StartWithMatch,

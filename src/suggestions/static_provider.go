@@ -29,11 +29,7 @@ func BuildStaticCompletionProvider(options []prompt.Suggest, fn SuggestionFilter
 	}
 	// build provider
 	return func(args ...string) []prompt.Suggest {
-		if len(args) == 0 {
-			return []prompt.Suggest{}
-		} else {
-			return fn(args, suggestions)
-		}
+		return fn(args, suggestions)
 	}
 }
 
