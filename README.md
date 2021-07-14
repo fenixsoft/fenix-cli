@@ -98,5 +98,8 @@ The main features of the subsequent versions of Fenix-CLI are planned as follows
 
 ## License
 
-- - This software is licensed under the Apache 2.0 license, see [LICENSE](https://github.com/fenixsoft/fenix-cli/blob/main/LICENSE) for more information.
+- This software is licensed under the Apache 2.0 license, see [LICENSE](https://github.com/fenixsoft/fenix-cli/blob/main/LICENSE) for more information.
 
+## Contact
+
+- [icyfenix@gmai.com](mailto:icyfenix@gmai.com)
